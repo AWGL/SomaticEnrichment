@@ -6,18 +6,26 @@ sampleId=$2
 panel=$3
 minimumCoverage=$4
 vendorCaptureBed=$5
-padding=$6
-minBQS=$7
-minMQS=$8
+vendorPrimaryBed=$6
+padding=$7
+minBQS=$8
+minMQS=$9
 
 gatk=/share/apps/GATK-distros/GATK_4.0.4.0/gatk
 #gatk3=/share/apps/GATK-distros/GATK_3.8.0/GenomeAnalysisTK.jar
 
-#Convert BED to interval_list for later
+#Convert capture BED to interval_list for later
 /share/apps/jre-distros/jre1.8.0_131/bin/java -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx2g \
     -jar /share/apps/picard-tools-distros/picard-tools-2.18.5/picard.jar BedToIntervalList \
     I=$vendorCaptureBed \
-    O="$panel"_ROI.interval_list \
+    O="$panel"_capture.interval_list \
+    SD=/state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.dict
+
+#Convert primary BED to interval_list for later
+/share/apps/jre-distros/jre1.8.0_131/bin/java -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx2g \
+    -jar /share/apps/picard-tools-distros/picard-tools-2.18.5/picard.jar BedToIntervalList \
+    I=$vendorPrimaryBed \
+    O="$panel"_primary.interval_list \
     SD=/state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.dict
 
 #Alignment metrics: library sequence similarity
@@ -44,18 +52,10 @@ gatk=/share/apps/GATK-distros/GATK_4.0.4.0/gatk
      I="$seqId"_"$sampleId".bam \
      O="$seqId"_"$sampleId"_HsMetrics.txt \
      R=/state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
-     BAIT_INTERVALS="$panel"_ROI.interval_list \
-     TARGET_INTERVALS="$panel"_ROI.interval_list \
+     BAIT_INTERVALS="$panel"_capture.interval_list \
+     TARGET_INTERVALS="$panel"_primary.interval_list \
      MAX_RECORDS_IN_RAM=2000000 \
      TMP_DIR=/state/partition1/tmpdir \
      MINIMUM_MAPPING_QUALITY=$minMQS \
      MINIMUM_BASE_QUALITY=$minBQS \
      CLIP_OVERLAPPING_READS=false
-
-$gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
-    CountReads \
-    -R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
-    -I "$seqId"_"$sampleId".bam \
-    -L $vendorCaptureBed \
-    -LE true \
-    > "$seqId"_"$sampleId"_onTargetReads.txt
