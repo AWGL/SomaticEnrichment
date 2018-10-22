@@ -3,6 +3,6 @@ read2Adapter=AGATCGGAAGAGC #read 2 adapter to trim
 minimumCoverage=250 #for passing regions. Need to determine during clinical validation
 includeBQSR=true #recalibrate base quality scores. Requires >100M bases ontarget
 expectedInsertSize=150 #insert size
-padding=10
+padding=100
 minBQS=10
 minMQS=20

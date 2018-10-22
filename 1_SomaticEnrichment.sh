@@ -81,6 +81,7 @@ fi
     $panel \
     $minimumCoverage \
     $vendorCaptureBed \
+    $vendorPrimaryBed \
     $padding \
     $minBQS \
     $minMQS
