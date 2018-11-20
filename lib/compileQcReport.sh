@@ -9,37 +9,21 @@ dir=/data/results/$seqId/$panel/$sampleId
 
 if [ -e $dir/"$seqId"_"$sampleId"_qc.txt ]; then rm $dir/"$seqId"_"$sampleId"_qc.txt; fi
 
-# gather metrics
+#Gather QC metrics
+meanInsertSize=$(head -n8 $dir/"$seqId"_"$sampleId"_InsertMetrics.txt | tail -n1 | cut -s -f5) #mean insert size
+sdInsertSize=$(head -n8 $dir/"$seqId"_"$sampleId"_InsertMetrics.txt | tail -n1 | cut -s -f6) #insert size standard deviation
+duplicationRate=$(head -n8 $dir/"$seqId"_"$sampleId"_markDuplicatesMetrics.txt | tail -n1 | cut -s -f9) #The percentage of mapped sequence that is marked as duplicate.
+totalReads=$(head -n8 $dir/"$seqId"_"$sampleId"_HsMetrics.txt | tail -n1 | cut -s -f6) #The total number of reads in the SAM or BAM file examine.
+pctSelectedBases=$(head -n8 $dir/"$seqId"_"$sampleId"_HsMetrics.txt | tail -n1 | cut -s -f19) #On+Near Bait Bases / PF Bases Aligned.
+totalTargetedUsableBases=$(head -n2 $dir/$seqId"_"$sampleId"_DepthOfCoverage".sample_summary | tail -n1 | cut -s -f2) #total number of usable bases. NB BQSR requires >= 100M, ideally >= 1B
+percentUseableBasesOnTarget=$(head -n8 $dir/"$seqId"_"$sampleId"_HsMetrics.txt | tail -n1 | cut -s -f27)
+meanOnTargetCoverage=$(head -n2 $dir/$seqId"_"$sampleId"_DepthOfCoverage".sample_summary | tail -n1 | cut -s -f3) #avg usable coverage
+pctTargetBasesCt=$(head -n2 $dir/$seqId"_"$sampleId"_DepthOfCoverage".sample_summary | tail -n1 | cut -s -f7) #percentage panel covered with good enough data for variant detection
 
-# total reads
-totalReads=$(head -n8 $dir/"$seqId"_"$sampleId"_HsMetrics.txt | tail -n1 | cut -s -f6)
-
-# unique reads (non duplicates)
-pctUniqueReads=$(head -n8 $dir/"$seqId"_"$sampleId"_HsMetrics.txt | tail -n 1 | cut -s -f10)
-
-# reads aligned
-pctAlignedReads=$(head -n8 $dir/"$seqId"_"$sampleId"_HsMetrics.txt | tail -n 1 | cut -s -f12)
-
-# on target bases
-pctSelectedBases=$(head -n8 $dir/"$seqId"_"$sampleId"_HsMetrics.txt | tail -n 1 | cut -s -f19)
-
-# on + near bait bases / PF bases aligned
-pctUsableBasesOnTarget=$(head -n8 $dir/"$seqId"_"$sampleId"_HsMetrics.txt | tail -n1 | cut -s -f27)
-
-# meanTargetDepth
-meanTargetDepth=$(head -n8 $dir/"$seqId"_"$sampleId"_HsMetrics.txt | tail -n1 | cut -s -f23)
-
-# total number of usable bases
-totalTargetedUsableBases=$(head -n2 $dir/"$seqId"_"$sampleId"_DepthOfCoverage.sample_summary | tail -n1 | cut -s -f2)
-
-# avg usable coverage
-meanOnTargetCoverage=$(head -n2 $dir/"$seqId"_"$sampleId"_DepthOfCoverage.sample_summary | tail -n1 | cut -s -f3)
-
-# percentage panel covered with good enough data for variant detection
-pctTargetBasesCt=$(head -n2 $dir/"$seqId"_"$sampleId"_DepthOfCoverage.sample_summary | tail -n1 | cut -s -f7)
-
-# Insert Sizes
-medInsertSize=$(head -n8 $dir/"$seqId"_"$sampleId"_InsertMetrics.txt | tail -n1 | cut -f1)
+#freemix=$(tail -n1 $dir/"$seqId"_"$sampleId"_Contamination.selfSM | cut -s -f7) #percentage DNA contamination. Should be <= 0.02
+pctPfReadsAligned=$(grep ^PAIR $dir/"$seqId"_"$sampleId"_AlignmentSummaryMetrics.txt | awk '{print $7*100}') #Percentage mapped reads
+atDropout=$(head -n8 $dir/"$seqId"_"$sampleId"_HsMetrics.txt | tail -n1 | cut -s -f51) #A measure of how undercovered <= 50% GC regions are relative to the mean
+gcDropout=$(head -n8 $dir/"$seqId"_"$sampleId"_HsMetrics.txt | tail -n1 | cut -s -f52) #A measure of how undercovered >= 50% GC regions are relative to the mean
 
 # check FASTQC output
 countQCFlagFails() {
@@ -60,6 +44,7 @@ do
     fi
 done
 
-# print QC metrics
-echo -e "SampleId\tTotalReads\tFASTQC\tPctUniqueReads\tPctAlignedReads\tPctOnTarget\tTotalTargetUsableBases\tPctSelectedBases\tPctUsableBasesOnTarget\tPctTargetBasesCt\tMeanOnTargetCoverage\tMedianInsertSize" > $dir/"$seqId"_"$sampleId"_QC.txt
-echo -e "$sampleId\t$totalReads\t$rawSequenceQuality\t$pctUniqueReads\t$pctAlignedReads\t$pctSelectedBases\t$totalTargetedUsableBases\t$pctSelectedBases\t$pctUsableBasesOnTarget\t$pctTargetBasesCt\t$meanOnTargetCoverage\t$medInsertSize" >> $dir/"$seqId"_"$sampleId"_QC.txt
+
+#Print QC metrics
+echo -e "TotalReads\tRawSequenceQuality\tTotalTargetUsableBases\tPercentTargetUseableBases\tDuplicationRate\tPctSelectedBases\tPctTargetBasesCt\tMeanOnTargetCoverage\tMeanInsertSize\tSDInsertSize\tPercentMapped\tAtDropout\tGcDropout" > $dir/"$seqId"_"$sampleId"_QC.txt
+echo -e "$totalReads\t$rawSequenceQuality\t$totalTargetedUsableBases\t$percentUseableBasesOnTarget\t$duplicationRate\t$pctSelectedBases\t$pctTargetBasesCt\t$meanOnTargetCoverage\t$meanInsertSize\t$sdInsertSize\t$pctPfReadsAligned\t$atDropout\t$gcDropout" >> $dir/"$seqId"_"$sampleId"_QC.txt
