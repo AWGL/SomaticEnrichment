@@ -98,7 +98,7 @@ fi
     $minMQS
 
 # pull all the qc data together
-./lib/compileQcReport.sh $seqId $sampleId
+./lib/compileQcReport.sh $seqId $sampleId $panel
 
 # variant calling
 ./lib/mutect2.sh $seqId $sampleId $pipelineName $version $panel $padding $minBQS $minMQS $vendorCaptureBed
