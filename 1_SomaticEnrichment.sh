@@ -87,7 +87,7 @@ fi
     $minMQS
 
 # coverage calculations
-./lib/calculateCoverage.sh \
+./lib/hotspot_coverage.sh \
     $seqId \
     $sampleId \
     $panel \
