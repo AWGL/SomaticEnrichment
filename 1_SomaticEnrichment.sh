@@ -112,14 +112,12 @@ fi
 ./lib/annotation.sh $seqId $sampleId
 
 # add samplename to run-level file if vcf detected
-if [ -e /data/results/$seqId/$panel/$sampleId/"seqId"_"$sampleId".vcf.gz ]
+if [ -e /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".vcf.gz ]
 then
     echo $sampleId >> /data/results/$seqId/$panel/sampleVCFs.txt
 fi
 
 ## CNV ANALYSIS
-
-echo "Running CNV Analysis"
 
 # only run if all samples have completed
 numberSamplesInVcf=$(cat ../sampleVCFs.txt | uniq | wc -l)
