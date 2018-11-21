@@ -91,6 +91,8 @@ fi
     $seqId \
     $sampleId \
     $panel \
+    $pipelineName \
+    $pipelineVersion \
     $minimumCoverage \
     $vendorCaptureBed \
     $padding \
