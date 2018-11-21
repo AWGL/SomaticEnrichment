@@ -26,7 +26,6 @@ $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir
     --min-base-quality-score $minBQS \
     --min-median-mapping-quality $minMQS \
     --output "$seqId"_"$sampleId"_filtered.vcf.gz \
-    --stats "$seqId"_"$sampleId"_filterStats.tsv \
     --verbosity ERROR \
     --QUIET true
 
