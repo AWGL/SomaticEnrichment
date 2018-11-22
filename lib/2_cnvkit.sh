@@ -32,7 +32,7 @@ echo "selecting common germline variants for CNV backbone"
 /share/apps/GATK-distros/GATK_4.0.4.0/gatk \
     SelectVariants \
     -R /data/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
-    -V /data/results/$seqId/$panel/$test_sample/"$seqId"_"$sampleId".vcf.gz \
+    -V /data/results/$seqId/$panel/$test_sample/"$seqId"_"$test_sample".vcf.gz \
     --select-type-to-include SNP \
     -O "$odir"/"$test_sample"_common.vcf \
     --selectExpressions 'POP_AF > 0.05' \
