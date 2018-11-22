@@ -10,8 +10,8 @@ dir=/data/results/$seqId/$panel/$sampleId
 if [ -e $dir/"$seqId"_"$sampleId"_qc.txt ]; then rm $dir/"$seqId"_"$sampleId"_qc.txt; fi
 
 #Gather QC metrics
-meanInsertSize=$(head -n8 $dir/"$seqId"_"$sampleId"_InsertMetrics.txt | tail -n1 | cut -s -f5) #mean insert size
-sdInsertSize=$(head -n8 $dir/"$seqId"_"$sampleId"_InsertMetrics.txt | tail -n1 | cut -s -f6) #insert size standard deviation
+meanInsertSize=$(head -n8 $dir/"$seqId"_"$sampleId"_InsertMetrics.txt | tail -n1 | cut -s -f6) #mean insert size
+sdInsertSize=$(head -n8 $dir/"$seqId"_"$sampleId"_InsertMetrics.txt | tail -n1 | cut -s -f7) #insert size standard deviation
 duplicationRate=$(head -n8 $dir/"$seqId"_"$sampleId"_markDuplicatesMetrics.txt | tail -n1 | cut -s -f9) #The percentage of mapped sequence that is marked as duplicate.
 totalReads=$(head -n8 $dir/"$seqId"_"$sampleId"_HsMetrics.txt | tail -n1 | cut -s -f6) #The total number of reads in the SAM or BAM file examine.
 pctSelectedBases=$(head -n8 $dir/"$seqId"_"$sampleId"_HsMetrics.txt | tail -n1 | cut -s -f19) #On+Near Bait Bases / PF Bases Aligned.
