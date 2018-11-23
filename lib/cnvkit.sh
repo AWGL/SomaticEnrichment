@@ -58,8 +58,10 @@ do
 
     mkdir -p /data/results/$seqId/$panel/$test_sample/CNVKit/
 
+    echo "${normal_samples[@]/%/.targetcoverage.cnn}" > /data/results/$seqId/$panel/$test_sample/CNVKit/tc.array
+    echo "${normal_samples[@]/%/.antitargetcoverage.cnn}" > /data/results/$seqId/$panel/$test_sample/CNVKit/atc.array
 
-    qsub -o ./$i/ -e ./$i/ /data/results/$seqId/$panel/$i/lib/2_cnvkit.sh  -F "$cnvkit $seqId $panel $test_sample $normal_samples"
+    qsub -o ./$i/ -e ./$i/ /data/results/$seqId/$panel/$i/lib/2_cnvkit.sh  -F "$cnvkit $seqId $panel $test_sample"
 
     cp /data/results/$seqId/$panel/"$i".targetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
     cp /data/results/$seqId/$panel/"$i".antitargetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
