@@ -17,7 +17,7 @@ odir=/data/results/$seqId/$panel/$test_sample/CNVKit/
 
 echo "generating references"
 
-$cnvkit reference $(cat $odir/tc.array) $(cat $oder/atc.array) --fasta $FASTA  -o "$odir"/"$test_sample".reference.cnn
+$cnvkit reference $(cat $odir/tc.array) $(cat $odir/atc.array) --fasta $FASTA  -o "$odir"/"$test_sample".reference.cnn
 
 echo "fixing ratios"
 $cnvkit fix "$test_sample".targetcoverage.cnn "$test_sample".antitargetcoverage.cnn "$odir"/"$test_sample".reference.cnn -o "$odir"/"$test_sample".cnr
