@@ -30,6 +30,7 @@ $cnvkit fix "$test_sample".targetcoverage.cnn "$test_sample".antitargetcoverage.
 
 echo "selecting common germline variants for CNV backbone"
 /share/apps/GATK-distros/GATK_4.0.4.0/gatk \
+    --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     SelectVariants \
     -R /data/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
     -V /data/results/$seqId/$panel/$test_sample/"$seqId"_"$test_sample".vcf.gz \
