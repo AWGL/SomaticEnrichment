@@ -54,7 +54,7 @@ done
 for i in ${samples[@]}
 do
     test_sample=$i
-    normal_samples=${samples[@]/$i}
+    normal_samples=( ${samples[@]/$i} )
 
     mkdir -p /data/results/$seqId/$panel/$test_sample/CNVKit/
 
