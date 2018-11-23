@@ -58,8 +58,6 @@ do
 
     mkdir -p /data/results/$seqId/$panel/$test_sample/CNVKit/
 
-    echo $test_sample > /data/results/$seqId/$panel/$test_sample/CNVKit/testSamples.txt
-    echo $normal_samples > /data/results/$seqId/$panel/$test_sample/CNVKit/referenceSamples.txt
 
     qsub -o ./$i/ -e ./$i/ /data/results/$seqId/$panel/$i/lib/2_cnvkit.sh  -F "$cnvkit $seqId $panel $test_sample $normal_samples"
 

@@ -21,8 +21,9 @@ atc="${normal_samples[@]/%/.antitargetcoverage.cnn}"
 odir=/data/results/$seqId/$panel/$test_sample/CNVKit/ 
 
 echo "generating references"
-echo "TEST: "$test_sample
-echo "NORMALS: "${normal_samples[@]}
+echo "TEST: "$test_sample > $odir/testSample.txt
+echo "NORMALS: "${normal_samples[@]} > $odir/referenceSamples.txt
+
 $cnvkit reference $tc $atc --fasta $FASTA  -o "$odir"/"$test_sample".reference.cnn
 
 echo "fixing ratios"
@@ -36,6 +37,7 @@ echo "selecting common germline variants for CNV backbone"
     -V /data/results/$seqId/$panel/$test_sample/"$seqId"_"$test_sample".vcf.gz \
     --select-type-to-include SNP \
     -O "$odir"/"$test_sample"_common.vcf \
+    --restrict-alleles-to BIALLELIC \
     --selectExpressions 'POP_AF > 0.05' \
     --selectExpressions 'POP_AF < 0.95'
 
