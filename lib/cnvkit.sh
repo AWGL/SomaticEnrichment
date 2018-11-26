@@ -67,5 +67,13 @@ do
     cp /data/results/$seqId/$panel/"$i".antitargetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
     cp /data/results/$seqId/$panel/*.target.bed /data/results/$seqId/$panel/$i/CNVKit/
     cp /data/results/$seqId/$panel/*.antitarget.bed /data/results/$seqId/$panel/$i/CNVKit/
+    cp /data/results/$seqId/$panel/"$i".segmetrics.cns /data/results/$seqId/$panel/$test_sample/CNVKit/
 
 done
+
+Â# tid
+rm /data/results/$seqId/$panel/*.targetcoverage.cnn
+rm /data/results/$seqId/$panel/*.antitargetcoverage.cnn
+rm /data/results/$seqId/$panel/*.segmetrics.cns
+rm /data/results/$seqId/$panel/*.target.bed
+rm /data/results/$seqId/$panel/*.antitarget.bed
