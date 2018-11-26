@@ -45,4 +45,4 @@ $cnvkit scatter "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns -v "$od
 $cnvkit breaks "$odir"/"$test_sample".cnr "$odir"/"$test_sample".cns > "$odir"/"$test_sample".breaks
 $cnvkit genemetrics "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns > "$odir"/"$test_sample".genemetrics
 $cnvkit sex "$odir"/"$test_sample".*.cnn "$odir"/"$test_sample".cnr "$odir"/"$test_sample".cns > "$odir"/"$test_sample".sex
-$cnvkit segmetrics "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns --ci --pi > "$odir"/"$test_sample".segmetrics
+$cnvkit segmetrics "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns --ci --pi
