@@ -7,32 +7,18 @@ set -euo pipefail
 seqId=$1
 sampleId=$2
 panel=$3
-version=$4
+pipelineName=$4
+piplineVersion=$5
 
 source /home/transfer/miniconda3/bin/activate vcf_parse
-
-if [ -d /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/"$panel"/hotspot_variants ]; then
     
-    mkdir hotspot_variants
+mkdir -p hotspot_variants
 
-    for bedFile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/"$panel"/hotspot_variants/*.bed;
-    do
+python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.1/vcf_parse.py \
+    --transcripts /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/$panel/"$panel"_PreferredTranscripts.txt \
+    --transcript_strictness low \
+    --config /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/$panel/"$panel"_ReportConfig.txt \
+    --bed_folder /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/$panel/hotspot_variants/ \
+    /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStr_annotated.vcf
 
-        target=$(basename "$bedFile" | sed 's/\.bed//g')
-
-        echo $target
-        
-        python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.0/vcf_parse.py \
-            --transcripts /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/$panel/"$panel"_PreferredTranscripts.txt \
-            --transcript_strictness low \
-            --config /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/$panel/"$panel"_config.txt \
-            --bed $bedFile \
-            --output /data/results/$seqId/$panel/$sampleId/hotspot_variants/ \
-            /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStr_annotated.vcf
-
-        mv /data/results/$seqId/$panel/$sampleId/hotspot_variants/$sampleId_VariantReport.txt /data/results/$seqId/$panel/$sampleId/hotspot_variants/"$sampleId"_"$target"_VariantReport.txt
-    done
-fi
-
-        
 source /home/transfer/miniconda3/bin/deactivate

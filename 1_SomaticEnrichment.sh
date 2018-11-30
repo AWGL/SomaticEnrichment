@@ -111,6 +111,9 @@ fi
 # annotation
 ./lib/annotation.sh $seqId $sampleId
 
+# generate variant reports
+./lib/hotspot_variants.sh $seqId $sampleId $panel $pipelineName $pipelineVersion
+
 # add samplename to run-level file if vcf detected
 if [ -e /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".vcf.gz ]
 then
