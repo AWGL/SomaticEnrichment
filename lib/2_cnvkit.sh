@@ -52,7 +52,7 @@ $cnvkit segmetrics "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns --ci
 mkdir -p /data/results/$seqId/$panel/$test_sample/hotspot_cnvs
 
 
-for cnvfile in /data/diagnostics/pipelines/SomaticEnrichement/SomaticEnrichment-0.0.1/RochePanCancer/hotspot_cnvs/*;do
+for cnvfile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0.0.1/RochePanCancer/hotspot_cnvs/*;do
     
     name=$(basename $cnvfile)
 
