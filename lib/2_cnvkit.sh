@@ -52,16 +52,44 @@ $cnvkit segmetrics "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns --ci
 for cnvfile in /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/$panel/hotspot_cnvs/*;do
     
     name=$(basename $cnvfile)
-    if [ -f /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name ]; then
-        rm /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
+
+    if [ $name == '1p19q' ]; then
+
+        $cnvkit scatter "$odir"/"$test_sample".cnr \
+            -s "$odir"/"$test_sample".cns \
+            -v "$odir"/"$test_sample"_common.vcf \
+            -c 1:836812-226252255 \
+            -g ' ' \
+            -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/chromosome1-scatter.pdf
+
+        $cnvkit scatter "$odir"/"$test_sample".cnr \
+            -s "$odir"/"$test_sample".cns \
+            -v "$odir"/"$test_sample"_common.vcf \
+            -c 19:27980136-58729905 \
+            -g ' ' \
+            -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/chromosome19-scatter.pdf
+
+    else
+
+        if [ -f /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name ]; then
+            rm /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
+        fi
+
+        # prepare output files
+        head -n 1 "$odir"/"$test_sample".genemetrics >> /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
+
+        while read gene; do
+            echo $gene
+            grep -w $gene "$odir"/"$test_sample".genemetrics >> /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
+            
+            $cnvkit scatter "$odir"/"$test_sample".cnr \
+                -s "$odir"/"$test_sample".cns \
+                -v "$odir"/"$test_sample"_common.vcf \
+                -g $gene \
+                -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$name"-scatter.pdf
+
+        done <$cnvfile
+
     fi
 
-    # prepare output files
-    head -n 1 "$odir"/"$test_sample".genemetrics >> /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
-
-    while read gene; do
-        echo $gene
-        grep -w $gene "$odir"/"$test_sample".genemetrics >> /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
-        $cnvkit scatter "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns -v "$odir"/"$test_sample"_common.vcf -g $gene -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$name"-scatter.pdf
-    done <$cnvfile
 done
