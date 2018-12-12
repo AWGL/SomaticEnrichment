@@ -46,3 +46,22 @@ $cnvkit breaks "$odir"/"$test_sample".cnr "$odir"/"$test_sample".cns > "$odir"/"
 $cnvkit genemetrics "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns > "$odir"/"$test_sample".genemetrics
 $cnvkit sex "$odir"/"$test_sample".*.cnn "$odir"/"$test_sample".cnr "$odir"/"$test_sample".cns > "$odir"/"$test_sample".sex
 $cnvkit segmetrics "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns --ci --pi
+
+# generate CNV report for each panel
+
+for cnvfile in /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/$panel/hotspot_cnvs/*;do
+    
+    name=$(basename $cnvfile)
+    if [ -f /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name ]; then
+        rm /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
+    fi
+
+    # prepare output files
+    head -n 1 "$odir"/"$test_sample".genemetrics >> /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
+
+    while read gene; do
+        echo $gene
+        grep -w $gene "$odir"/"$test_sample".genemetrics >> /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
+        $cnvkit scatter "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns -v "$odir"/"$test_sample"_common.vcf -g $gene -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$name"-scatter.pdf
+    done <$cnvfile
+done
