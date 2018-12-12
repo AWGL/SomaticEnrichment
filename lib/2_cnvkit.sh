@@ -49,7 +49,7 @@ $cnvkit segmetrics "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns --ci
 
 # generate CNV report for each panel
 
-for cnvfile in /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/$panel/hotspot_cnvs/*;do
+for cnvfile in /data/diagnostics/pipelines/SomaticEnrichement/SomaticEnrichment-0.0.1/RochePanCancer/hotspot_cnvs/*;do
     
     name=$(basename $cnvfile)
 
