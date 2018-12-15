@@ -14,12 +14,19 @@ minMQS=${10}
 
 gatk3=/share/apps/GATK-distros/GATK_3.8.0/GenomeAnalysisTK.jar
 
-# Generate per-base coverage: variant detection sensitivity
+# add padding to vendor bedfile
+/share/apps/bedtools-distros/bedtools-2.26.0/bin/bedtools \
+    slop \
+    -i $vendorCaptureBed \
+    -b $padding \
+    -g /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta > vendorCaptureBed_100pad.bed
+
+#Generate per-base coverage: variant detection sensitivity
 /share/apps/jre-distros/jre1.8.0_131/bin/java -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g -jar $gatk3 \
     -T DepthOfCoverage \
     -R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
     -I /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".bam \
-    -L $vendorCaptureBed \
+    -L vendorCaptureBed_100pad.bed \
     -o /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage \
     --countType COUNT_FRAGMENTS \
     --minMappingQuality $minMQS \
@@ -47,7 +54,7 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
     name=$(echo $(basename $bedFile) | cut -d"." -f1)
     echo $name
 
-    python /home/transfer/CoverageCalculatorPy/CoverageCalculatorPy.py \
+    python /home/transfer/pipelines/CoverageCalculatorPy/CoverageCalculatorPy.py \
         -B $bedFile \
         -D /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz \
         --depth $minimumCoverage \
