@@ -45,7 +45,7 @@ $cnvkit scatter "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns -v "$od
 $cnvkit breaks "$odir"/"$test_sample".cnr "$odir"/"$test_sample".cns > "$odir"/"$test_sample".breaks
 $cnvkit genemetrics "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns > "$odir"/"$test_sample".genemetrics
 $cnvkit sex "$odir"/"$test_sample".*.cnn "$odir"/"$test_sample".cnr "$odir"/"$test_sample".cns > "$odir"/"$test_sample".sex
-$cnvkit segmetrics "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns --ci --pi
+# $cnvkit segmetrics "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".cns --ci --pi
 
 # generate CNV report for each panel
 
@@ -55,6 +55,7 @@ mkdir -p /data/results/$seqId/$panel/$test_sample/hotspot_cnvs
 for cnvfile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0.0.1/RochePanCancer/hotspot_cnvs/*;do
     
     name=$(basename $cnvfile)
+    echo $name
 
     if [ $name == '1p19q' ]; then
 
@@ -83,13 +84,17 @@ for cnvfile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0
 
         while read gene; do
             echo $gene
-            grep -w $gene "$odir"/"$test_sample".genemetrics >> /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
+
+            # check that gene contains an entry in genemetrics file
+            if grep -qw $gene "$odir"/"$test_sample".genemetrics; then
+                grep -w $gene "$odir"/"$test_sample".genemetrics >> /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
+            fi
             
             $cnvkit scatter "$odir"/"$test_sample".cnr \
                 -s "$odir"/"$test_sample".cns \
                 -v "$odir"/"$test_sample"_common.vcf \
                 -g $gene \
-                -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$name"-scatter.pdf
+                -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$gene"-scatter.pdf
 
         done <$cnvfile
 

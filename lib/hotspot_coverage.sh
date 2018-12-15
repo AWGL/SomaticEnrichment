@@ -47,7 +47,7 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
     name=$(echo $(basename $bedFile) | cut -d"." -f1)
     echo $name
 
-    python /home/transfer/CoverageCalculatorPy/coverageCalculator.py \
+    python /home/transfer/CoverageCalculatorPy/CoverageCalculatorPy.py \
         -B $bedFile \
         -D /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz \
         --depth $minimumCoverage \
