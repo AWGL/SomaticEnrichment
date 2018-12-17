@@ -19,7 +19,7 @@ gatk3=/share/apps/GATK-distros/GATK_3.8.0/GenomeAnalysisTK.jar
     slop \
     -i $vendorCaptureBed \
     -b $padding \
-    -g /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta > vendorCaptureBed_100pad.bed
+    -g /share/apps/bedtools-distros/bedtools-2.26.0/genomes/human.hg19.genome > vendorCaptureBed_100pad.bed
 
 #Generate per-base coverage: variant detection sensitivity
 /share/apps/jre-distros/jre1.8.0_131/bin/java -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g -jar $gatk3 \
