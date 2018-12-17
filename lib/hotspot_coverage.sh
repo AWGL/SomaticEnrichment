@@ -70,15 +70,15 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
     rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.totalCoverage
 
     # combine all total gaps files
-    if [ -f /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_gaps.txt ]; then rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_gaps.txt; fi
-    cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.gaps | grep "#" | head -n 1 >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_gaps.txt
-    cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.gaps | grep -v "#" >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_gaps.txt
-    rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.gaps
+    #if [ -f /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_gaps.txt ]; then rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_gaps.txt; fi
+    #cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.gaps | grep "#" | head -n 1 >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_gaps.txt
+    #cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.gaps | grep -v "#" >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_gaps.txt
+    #rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.gaps
 
-    # combine all total gaps files
-    if [ -f /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_missing.txt ]; then rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_missing.txt; fi
-    cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.missing > /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_missing.txt
-    rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.missing
+    # combine all total missing files
+    #if [ -f /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_missing.txt ]; then rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_missing.txt; fi
+    #cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.missing > /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_missing.txt
+    #rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.missing
 
 
 
