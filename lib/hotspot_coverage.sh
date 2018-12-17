@@ -84,5 +84,6 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
 
 fi
 
+rm vendorCaptureBed_100pad.bed
 source /home/transfer/miniconda3/bin/deactivate
 
