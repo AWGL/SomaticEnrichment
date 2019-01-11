@@ -8,7 +8,7 @@ seqId=$1
 sampleId=$2
 panel=$3
 pipelineName=$4
-piplineVersion=$5
+pipelineVersion=$5
 
 source /home/transfer/miniconda3/bin/activate vcf_parse
     
