@@ -42,11 +42,11 @@ sed 's/:/\t/g' /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthO
 /share/apps/htslib-distros/htslib-1.4.1/tabix -b 2 -e 2 -s 1 /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz
 
 
-source /home/transfer/miniconda3/bin/activate CoverageCalculatorPy
-
 if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage ]; then
 
     mkdir -p /data/results/$seqId/$panel/$sampleId/hotspot_coverage
+
+    source /home/transfer/miniconda3/bin/activate CoverageCalculatorPy
 
     for bedFile in /data/diagnostics/pipelines/"$pipelineName"/"$pipelineName"-"$pipelineVersion"/$panel/hotspot_coverage/*.bed
     do
@@ -62,23 +62,33 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
             --outname $name \
             --outdir /data/results/$seqId/$panel/$sampleId/hotspot_coverage/
 
+        # remove header from gaps file
+        grep -v '^#' /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".gaps > /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".nohead.gaps
+        rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".gaps
 
-        # add hgvc to gaps file
-        source /home/transfer/miniconda3/bin/activate bed2hgvs
+    done
 
-        python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1/configs/cluster.yaml \
-            --input /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".gaps \
+
+    source /home/transfer/miniconda3/bin/deactivate
+
+    # add hgvs nomenclature to gaps
+    source /home/transfer/miniconda3/bin/activate bed2hgvs
+
+    for gapsFile in /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.nohead.gaps
+    do
+
+        name=$(echo $(basename $gapsFile) | cut -d"." -f1)
+        echo $name
+
+        python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1/configs/cluster.yaml \
+            --input $gapsFile \
             --output /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".hgvs.gaps \
             --transcript_map /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0.0.1/RochePanCancer/RochePanCancer_PreferredTranscripts.txt
 
-        rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".gaps
-
-        source /home/transfer/miniconda3/bin/deactivate
-
-
-
-
+        rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".nohead.gaps
     done
+    
+    source /home/transfer/miniconda3/bin/deactivate
 
     # combine all total coverage files
     if [ -f /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt ]; then rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt; fi
@@ -102,5 +112,3 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
 fi
 
 rm vendorCaptureBed_100pad.bed
-source /home/transfer/miniconda3/bin/deactivate
-
