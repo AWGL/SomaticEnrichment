@@ -51,16 +51,33 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
     for bedFile in /data/diagnostics/pipelines/"$pipelineName"/"$pipelineName"-"$pipelineVersion"/$panel/hotspot_coverage/*.bed
     do
 
-    name=$(echo $(basename $bedFile) | cut -d"." -f1)
-    echo $name
+        name=$(echo $(basename $bedFile) | cut -d"." -f1)
+        echo $name
 
-    python /home/transfer/pipelines/CoverageCalculatorPy/CoverageCalculatorPy.py \
-        -B $bedFile \
-        -D /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz \
-        --depth $minimumCoverage \
-        --padding 0 \
-        --outname $name \
-        --outdir /data/results/$seqId/$panel/$sampleId/hotspot_coverage/
+        python /home/transfer/pipelines/CoverageCalculatorPy/CoverageCalculatorPy.py \
+            -B $bedFile \
+            -D /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz \
+            --depth $minimumCoverage \
+            --padding 0 \
+            --outname $name \
+            --outdir /data/results/$seqId/$panel/$sampleId/hotspot_coverage/
+
+
+        # add hgvc to gaps file
+        source /home/transfer/miniconda3/bin/activate bed2hgvs
+
+        python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1/configs/cluster.yaml \
+            --input /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".gaps \
+            --output /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".hgvs.gaps \
+            --transcript_map /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0.0.1/RochePanCancer/RochePanCancer_PreferredTranscripts.txt
+
+        rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".gaps
+
+        source /home/transfer/miniconda3/bin/deactivate
+
+
+
+
     done
 
     # combine all total coverage files
