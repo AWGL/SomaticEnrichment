@@ -1,7 +1,6 @@
 # SomaticEnrichment
 NGS pipeline for the detection of somatic variation (SNVs &amp; CNVs) and fusion genes
 
-
 ### CNV Calling
 
 CNV calling is performed using [CNVKit](https://cnvkit.readthedocs.io/en/stable/).
@@ -20,5 +19,10 @@ The log2 thresholds for a single copy deletion / duplication will be dependent o
 ```
 2 x loss = log2(0.2*(0/2) + 0.8*(2/2)) = log2 < -0.32
 1 x loss = log2(0.2*(1/2) + 0.8*(2/2)) = log2 < -0.15
-1 x gain = log2(0.2*(3/2) + 0.8*(2/2)) = log2 > 0.14
+1 x gain = log2(0.2*(3/2) + 0.8*(2/2)) = log2 >  0.14
+2 x gain = log2(0.2*(4/2) + 0.8*(2/2)) = log2 >  0.26
+3 x gain = log2(0.2*(4/2) + 0.8*(2/2)) = log2 >  0.38
+4 x gain = log2(0.2*(4/2) + 0.8*(2/2)) = log2 >  0.49
 ```
+
+
