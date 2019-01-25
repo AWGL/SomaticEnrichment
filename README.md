@@ -17,7 +17,8 @@ The main CNV reports for each sample can be found in the *hotspot_cnvs* subdirec
 
 The log2 thresholds for a single copy deletion / duplication will be dependent on tumor purity. If we have a sample which is 100% tumor, a single copy deletion will have a log2 < log2(1/2) = -1.00 and a single dopy amplification will be > log2(3/2) = 0.58. These thresholds will move closer to 0 as tumor purity reduces. For example, with a tumor purity of 10% the thresholds will be;
 
+```
 2 x loss = log2(0.2*(0/2) + 0.8*(2/2)) = log2 < -0.32
 1 x loss = log2(0.2*(1/2) + 0.8*(2/2)) = log2 < -0.15
 1 x gain = log2(0.2*(3/2) + 0.8*(2/2)) = log2 > 0.14
-
+```
