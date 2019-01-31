@@ -44,7 +44,7 @@ $cnvkit metrics "$test_sample".targetcoverage.cnn "$test_sample".antitargetcover
 $cnvkit scatter "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".call.cns -v "$odir"/"$test_sample"_common.vcf -o "$odir"/"$test_sample"-scatter.pdf
 $cnvkit breaks "$odir"/"$test_sample".cnr "$odir"/"$test_sample".call.cns > "$odir"/"$test_sample".breaks
 $cnvkit genemetrics "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".call.cns -m 3 -t 0.13 > "$odir"/"$test_sample".genemetrics
-$cnvkit sex "$odir"/"$test_sample".*.cnn "$odir"/"$test_sample".cnr "$odir"/"$test_sample".segmetrics.cns > "$odir"/"$test_sample".sex
+$cnvkit sex "$odir"/"$test_sample".*.cnn "$odir"/"$test_sample".cnr "$odir"/"$test_sample".call.cns > "$odir"/"$test_sample".sex
 
 # generate CNV report for each panel
 
