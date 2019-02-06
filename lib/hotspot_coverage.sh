@@ -59,7 +59,8 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
             -D /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz \
             --depth $minimumCoverage \
             --padding 0 \
-            --outname $name \
+            --groupfile /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage/"$name".groups \
+            --outname "$sampleId"_"$name" \
             --outdir /data/results/$seqId/$panel/$sampleId/hotspot_coverage/
 
         # remove header from gaps file
