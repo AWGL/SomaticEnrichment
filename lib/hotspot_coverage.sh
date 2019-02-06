@@ -83,10 +83,10 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
 
         python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1/configs/cluster.yaml \
             --input $gapsFile \
-            --output /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_"$name".hgvs.gaps \
+            --output /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".hgvs.gaps \
             --transcript_map /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0.0.1/RochePanCancer/RochePanCancer_PreferredTranscripts.txt
 
-        rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_"$name".nohead.gaps
+        rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".nohead.gaps
     done
     
     source /home/transfer/miniconda3/bin/deactivate
