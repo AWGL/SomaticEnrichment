@@ -64,7 +64,16 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
             --outdir /data/results/$seqId/$panel/$sampleId/hotspot_coverage/
 
         # remove header from gaps file
+
+        if [[ $(wc -l < /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_"$name".gaps) -eq 1 ]]
+        then
+        # no gaps
+        touch /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_"$name".nohead.gaps
+        else
+        # gaps
         grep -v '^#' /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_"$name".gaps > /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_"$name".nohead.gaps
+        fi
+
         rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_"$name".gaps
 
     done
