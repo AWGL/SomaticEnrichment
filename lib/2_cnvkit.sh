@@ -64,37 +64,37 @@ for cnvfile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0
             -v "$odir"/"$test_sample"_common.vcf \
             -c 1:836812-226252255 \
             -g '' \
-            -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/chromosome1-scatter.pdf
+            -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$test_sample"_chromosome1-scatter.pdf
 
         $cnvkit scatter "$odir"/"$test_sample".cnr \
             -s "$odir"/"$test_sample".cns \
             -v "$odir"/"$test_sample"_common.vcf \
             -c 19:27980136-58729905 \
             -g '' \
-            -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/chromosome19-scatter.pdf
+            -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$test_sample"_chromosome19-scatter.pdf
 
     else
 
-        if [ -f /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name ]; then
-            rm /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
+        if [ -f /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$test_sample"_"$name" ]; then
+            rm /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$test_sample"_"$name"
         fi
 
         # prepare output files
-        head -n 1 "$odir"/"$test_sample".genemetrics >> /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
+        head -n 1 "$odir"/"$test_sample".genemetrics >> /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$test_sample"_"$name"
 
         while read gene; do
             echo $gene
 
             # check that gene contains an entry in genemetrics file
             if grep -qw $gene "$odir"/"$test_sample".genemetrics; then
-                grep -w $gene "$odir"/"$test_sample".genemetrics >> /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/$name
+                grep -w $gene "$odir"/"$test_sample".genemetrics >> /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$test_sample"_"$name"
             fi
             
             $cnvkit scatter "$odir"/"$test_sample".cnr \
                 -s "$odir"/"$test_sample".cns \
                 -v "$odir"/"$test_sample"_common.vcf \
                 -g $gene \
-                -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$gene"-scatter.pdf
+                -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$test_sample"_"$gene"-scatter.pdf
 
         done <$cnvfile
 
