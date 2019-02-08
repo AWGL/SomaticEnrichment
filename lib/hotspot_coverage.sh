@@ -84,7 +84,7 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
     # add hgvs nomenclature to gaps
     source /home/transfer/miniconda3/bin/activate bed2hgvs
 
-    for gapsFile in /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.nohead.gaps
+    for gapsFile in /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*genescreen.nohead.gaps /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*hotspots.nohead.gaps
     do
 
         name=$(echo $(basename $gapsFile) | cut -d"." -f1)
@@ -92,7 +92,7 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
 
         python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/bed2hgvs.py --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1/configs/cluster.yaml \
             --input $gapsFile \
-            --output /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".hgvs.gaps \
+            --output /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".gaps \
             --transcript_map /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0.0.1/RochePanCancer/RochePanCancer_PreferredTranscripts.txt
 
         rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".nohead.gaps
@@ -103,21 +103,9 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
     # combine all total coverage files
     if [ -f /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt ]; then rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt; fi
     cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.totalCoverage | grep "FEATURE" | head -n 1 >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt
-    cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.totalCoverage | grep -v "FEATURE" >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt
+    cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.totalCoverage | grep -v "FEATURE" | grep -vP "*combined_\\S+_GENE" >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt
     rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.totalCoverage
-
-    # combine all total gaps files
-    #if [ -f /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_gaps.txt ]; then rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_gaps.txt; fi
-    #cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.gaps | grep "#" | head -n 1 >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_gaps.txt
-    #cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.gaps | grep -v "#" >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_gaps.txt
-    #rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.gaps
-
-    # combine all total missing files
-    #if [ -f /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_missing.txt ]; then rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_missing.txt; fi
-    #cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.missing > /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_missing.txt
-    #rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.missing
-
-
+    rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*combined*
 
 fi
 
