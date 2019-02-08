@@ -103,7 +103,7 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
     # combine all total coverage files
     if [ -f /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt ]; then rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt; fi
     cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.totalCoverage | grep "FEATURE" | head -n 1 >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt
-    cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.totalCoverage | grep -v "FEATURE" | grep -vP "*combined_\\S+_GENE" >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt
+    cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt
     rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.totalCoverage
     rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*combined*
 
