@@ -96,7 +96,7 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
             --transcript_map /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0.0.1/RochePanCancer/RochePanCancer_PreferredTranscripts.txt
 
         rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".nohead.gaps
-        mv /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".hgvs.gaps /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".gaps
+        # mv /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".hgvs.gaps /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".gaps
     done
     
     source /home/transfer/miniconda3/bin/deactivate
