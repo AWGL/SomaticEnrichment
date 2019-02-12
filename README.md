@@ -39,6 +39,9 @@ purity corrected log2 ratio
 
 adjusted_cn = (ploidy * 2 ^ log2_ratio - ploidy * (1 - purity)) / purity
 adjusted_log2 = log2(abs(adjusted_cn)/ploidy)
+
+example...
+when purity is 0.3, a log2 ratio of -0.491313 is adjusted to -4.720723
 ```
 
 
