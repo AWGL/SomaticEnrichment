@@ -34,4 +34,11 @@ The hotspot_cnv reports will report any gene dosage change down to 10% purity.
 3. Number of bins
 4. Confidence Interval of log2 Ratio
 
+```
+purity corrected log2 ratio
+
+adjusted_cn = (ploidy * 2 ^ log2_ratio - ploidy * (1 - purity)) / purity
+adjusted_log2 = log2(abs(adjusted_cn)/ploidy)
+```
+
 
