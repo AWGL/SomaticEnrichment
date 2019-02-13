@@ -1,6 +1,23 @@
 # SomaticEnrichment
 NGS pipeline for the detection of somatic variation (SNVs &amp; CNVs) and fusion genes
 
+### SNV Filters
+
+| filter | description |
+|--------|-------------|
+| base_quality | median base quality of alt alleles < 10 |
+| clustered_events | clustered events (multiple, proximal variants) observed in the non-reference (tumor) sample |
+| fragment_length | significant difference in median fragment legths containing ref versus alt calls |
+| germline_risk | evidence indicates this site is germline, not somatic. Based on SNV frequency and reference cohort |
+| mapping_quality | significant difference in median mapping quality of reads containing ref versus alt calls |
+| multiallelic | site filtered because too many alt alleles pass tumor LOD |
+| orientation_bias | alt / ref allele are biased towards forward or reverse reads |
+| read_position | median distance of alt variants from end of reads |
+| strand_artifact | evidence for alt allele comes from one read direction only |
+| str_contraction | site filtered due to contraction of short tandem repeat region |
+| t_lod | tumor does not meet likelihood threshold |
+
+
 ### CNV Calling
 
 CNV calling is performed using [CNVKit](https://cnvkit.readthedocs.io/en/stable/).
