@@ -19,6 +19,6 @@ python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.1/vcf_parse.py \
     --transcript_strictness low \
     --config /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/$panel/"$panel"_ReportConfig.txt \
     --bed_folder /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/$panel/hotspot_variants/ \
-    /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStr_annotated.vcf
+    /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf
 
 source /home/transfer/miniconda3/bin/deactivate

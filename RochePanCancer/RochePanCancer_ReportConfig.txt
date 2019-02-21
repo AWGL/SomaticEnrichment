@@ -29,4 +29,3 @@ INTRON	vep
 EXON	vep
 SIFT	vep
 PolyPhen	vep
-CANONICAL	vep

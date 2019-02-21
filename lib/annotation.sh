@@ -7,9 +7,9 @@ seqId=$1
 sampleId=$2
 
 perl /share/apps/vep-distros/ensembl-tools-release-86/scripts/variant_effect_predictor/variant_effect_predictor.pl \
-    --input_file "$seqId"_"$sampleId"_filteredStr.vcf.gz \
+    --input_file "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf.gz \
     --format vcf \
-    --output_file "$seqId"_"$sampleId"_filteredStr_annotated.vcf \
+    --output_file "$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf \
     --vcf \
     --everything \
     --fork 12 \
@@ -34,12 +34,12 @@ perl /share/apps/vep-distros/ensembl-tools-release-86/scripts/variant_effect_pre
 # index and validation
 $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     IndexFeatureFile \
-    -F "$seqId"_"$sampleId"_filteredStr_annotated.vcf
+    -F "$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf
 
 # extract variants PASSING filter
 $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     SelectVariants \
     -R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
-    -V "$seqId"_"$sampleId"_filteredStr_annotated.vcf \
+    -V "$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf \
     -O "$seqId"_"$sampleId"_PASS.vcf \
     --exclude-filtered

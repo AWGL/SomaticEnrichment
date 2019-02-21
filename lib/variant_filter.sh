@@ -7,6 +7,7 @@ minBQS=$3
 minMQS=$4
 
 gatk=/share/apps/GATK-distros/GATK_4.0.4.0/gatk
+gatk4.1=/share/apps/GATK-distros/GATK-4.1.0.0/gatk
 
 $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     GetPileupSummaries \
@@ -46,4 +47,14 @@ $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir
     -P seqArtifacts.pre_adapter_detail_metrics.txt \
     -O "$seqId"_"$sampleId"_filteredStr.vcf.gz \
     --verbosity ERROR \
+    --QUIET true
+
+$gatk-4.1 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
+    LeftAlignAndTrimVariants \
+    -R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+    -V "$seqId"_"$sampleId"_filteredStr.vcf.gz \
+    -O "$seqId"_"$sampleId"_filteredStrLeftAlign.vcf.gz \
+    --split-multi-allelics \
+    --max-indel-length 100 \
+    --VERBOSITY ERROR \
     --QUIET true
