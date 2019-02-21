@@ -49,12 +49,9 @@ $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir
     --verbosity ERROR \
     --QUIET true
 
-$gatk-4.1 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
-    LeftAlignAndTrimVariants \
-    -R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
-    -V "$seqId"_"$sampleId"_filteredStr.vcf.gz \
-    -O "$seqId"_"$sampleId"_filteredStrLeftAlign.vcf.gz \
-    --split-multi-allelics \
-    --max-indel-length 100 \
-    --VERBOSITY ERROR \
-    --QUIET true
+# split multialleleic calls onto separate line and filter SNVs / Indels < 1%
+/share/apps/bcftools-distros/bcftools-1.8/bin/bcftools norm \ 
+    -m - \ 
+    "$seqId"_"$sampleId"_filteredStr.vcf.gz | \ 
+    /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools filter -e 'AF < 0.01' \
+    > "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf.gz
