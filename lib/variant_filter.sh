@@ -7,7 +7,6 @@ minBQS=$3
 minMQS=$4
 
 gatk=/share/apps/GATK-distros/GATK_4.0.4.0/gatk
-gatk4.1=/share/apps/GATK-distros/GATK-4.1.0.0/gatk
 
 $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     GetPileupSummaries \
@@ -50,8 +49,5 @@ $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir
     --QUIET true
 
 # split multialleleic calls onto separate line and filter SNVs / Indels < 1%
-/share/apps/bcftools-distros/bcftools-1.8/bin/bcftools norm \ 
-    -m - \ 
-    "$seqId"_"$sampleId"_filteredStr.vcf.gz | \ 
-    /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools filter -e 'AF < 0.01' \
-    > "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf.gz
+/share/apps/bcftools-distros/bcftools-1.8/bin/bcftools norm -m - "$seqId"_"$sampleId"_filteredStr.vcf.gz | /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools filter -e 'AF < 0.01' | /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools view -f PASS
+ > "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf.gz
