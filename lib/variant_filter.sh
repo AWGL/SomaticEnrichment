@@ -49,5 +49,4 @@ $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir
     --QUIET true
 
 # split multialleleic calls onto separate line and filter SNVs / Indels < 1%
-/share/apps/bcftools-distros/bcftools-1.8/bin/bcftools norm -m - "$seqId"_"$sampleId"_filteredStr.vcf.gz | /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools filter -e 'AF < 0.01' | /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools view -f PASS
- > "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf.gz
+/share/apps/bcftools-distros/bcftools-1.8/bin/bcftools norm -m - "$seqId"_"$sampleId"_filteredStr.vcf.gz | /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools filter -e 'AF < 0.01' | /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools view -f PASS > "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf.gz
