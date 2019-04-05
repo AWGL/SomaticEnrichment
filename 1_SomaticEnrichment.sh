@@ -120,6 +120,11 @@ then
     echo $sampleId >> /data/results/$seqId/$panel/sampleVCFs.txt
 fi
 
+# generate excel reports using virtual Hood
+./lib/make_variant_report.sh $seqId $sampleId $referral $worklistId
+
+
+
 ## CNV ANALYSIS
 
 # only run if all samples have completed
