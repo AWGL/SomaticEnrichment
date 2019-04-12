@@ -49,4 +49,19 @@ $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir
     --QUIET true
 
 # split multialleleic calls onto separate line and filter SNVs / Indels < 1%
-/share/apps/bcftools-distros/bcftools-1.8/bin/bcftools norm -m - "$seqId"_"$sampleId"_filteredStr.vcf.gz | /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools filter -e 'AF < 0.01' | /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools view -f PASS > "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf.gz
+/share/apps/bcftools-distros/bcftools-1.8/bin/bcftools norm -m - "$seqId"_"$sampleId"_filteredStr.vcf.gz |
+    /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools filter -e 'AF < 0.01' |
+    /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools view -e 'FILTER="multiallelic" ||
+        FILTER="str_contraction"    ||
+        FILTER="t_lod"              ||
+        FILTER="base_quality"       ||
+        FILTER="strand_artifact"    ||
+        FILTER="read_position"      ||
+        FILTER="orientation_bias"   ||
+        FILTER="mapping_quality"    ||
+        FILTER="fragment_length"    ||
+        FILTER="artifact_in_normal" ||
+        FILTER="contamination"      ||
+        FILTER="duplicate_evidence" ||
+        FILTER="panel_of_normals"' \
+        190313_NB551415_0011_AH57W5AFXY_14M07220_filteredStr.vcf.gz > "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf.gz
