@@ -64,4 +64,4 @@ $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir
         FILTER="contamination"      ||
         FILTER="duplicate_evidence" ||
         FILTER="panel_of_normals"' \
-        190313_NB551415_0011_AH57W5AFXY_14M07220_filteredStr.vcf.gz > "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf.gz
+        "$seqId"_"$sampleId"_filteredStr.vcf.gz > "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf.gz
