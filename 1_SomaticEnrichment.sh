@@ -137,9 +137,9 @@ then
     echo "running CNVKit as $numberSamplesInVcf samples have completed SNV calling"
     # run cnv kit
     ./lib/cnvkit.sh $seqId $panel $vendorPrimaryBed
-
-    # run gatk somatic CNV calling pipeline
-    # bash GATK4_somaticCNV.sh $seqId $sampleId $panel $ROI
 else
     echo "not all samples have been run yet!"
 fi
+
+rm /data/results/$seqId/$panel/*.cnn
+rm /data/results/$seqId/$panel/*.bed

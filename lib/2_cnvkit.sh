@@ -36,7 +36,7 @@ echo "selecting common germline variants for CNV backbone"
 
 echo "seqgmentation"
 $cnvkit segment "$odir"/"$test_sample".cnr -m cbs -o "$odir"/"$test_sample".cns --vcf "$odir"/"$test_sample"_common.vcf --drop-low-coverage
-$cnvkit segmetrics -s "$odir"/"$test_sample".cn{s,r} --ci
+$cnvkit segmetrics -s "$odir"/"$test_sample".cn{s,r} -o "odir"/"test_sample".segmetrics.cns --ci
 
 $cnvkit call "$test_sample".segmetrics.cns -o "$odir"/"$test_sample".call.cns --vcf "$odir"/"$test_sample"_common.vcf -m threshold -t=-0.32,-0.15,0.14,0.26 --filter ci
 

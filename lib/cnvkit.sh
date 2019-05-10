@@ -3,8 +3,8 @@ set -euo pipefail
 
 # Description: wrapper script to two further CNVKit scripts (1_cnvkit.sh and 2_cnvkit.sh)
 # Author:      Christopher Medway  
-# Mode:        Run once by the final sample to be processed
-# Use:         Called by 1_SomaticEnrichment.sh
+# Mode:        run once by the final sample to be processed
+# Use:         called by 1_SomaticEnrichment.sh
 
 seqId=$1
 panel=$2
@@ -69,17 +69,9 @@ do
 
     qsub -o ./$i/ -e ./$i/ /data/results/$seqId/$panel/$i/lib/2_cnvkit.sh  -F "$cnvkit $seqId $panel $test_sample"
 
-    cp /data/results/$seqId/$panel/"$i".targetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
-    cp /data/results/$seqId/$panel/"$i".antitargetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
-    cp /data/results/$seqId/$panel/*.target.bed /data/results/$seqId/$panel/$i/CNVKit/
-    cp /data/results/$seqId/$panel/*.antitarget.bed /data/results/$seqId/$panel/$i/CNVKit/
-    cp /data/results/$seqId/$panel/"$i".segmetrics.cns /data/results/$seqId/$panel/$test_sample/CNVKit/
+    cp /data/results/$seqId/$panel/"$test_sample".targetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
+    cp /data/results/$seqId/$panel/"$test_sample".antitargetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
+    cp /data/results/$seqId/$panel/*.target.bed /data/results/$seqId/$panel/$test_sample/CNVKit/
+    cp /data/results/$seqId/$panel/*.antitarget.bed /data/results/$seqId/$panel/$test_sample/CNVKit/
 
 done
-
-# tidy
-rm /data/results/$seqId/$panel/*.targetcoverage.cnn
-rm /data/results/$seqId/$panel/*.antitargetcoverage.cnn
-rm /data/results/$seqId/$panel/*.target.bed
-rm /data/results/$seqId/$panel/*.antitarget.bed
-rm /data/results/$seqId/$panel/*.segmetrics.cns
