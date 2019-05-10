@@ -1,17 +1,22 @@
 #!/bin/bash
 set -euo pipefail
 
-# script should be run once - when last sample in run has been processed
+# Description: wrapper script to two further CNVKit scripts (1_cnvkit.sh and 2_cnvkit.sh)
+# Author:      Christopher Medway  
+# Mode:        Run once by the final sample to be processed
+# Use:         Called by 1_SomaticEnrichment.sh
+
 seqId=$1
 panel=$2
 vendorCaptureBed=$3
 
+# resources
 FASTA=/data/db/human/gatk/2.8/b37/human_g1k_v37.fasta
+cnvkit=/share/apps/anaconda2/bin/cnvkit.py
 
 # navigate to run directory
 cd /data/results/$seqId/$panel/
 
-cnvkit=/share/apps/anaconda2/bin/cnvkit.py
 samples=$(cat /data/results/$seqId/$panel/sampleVCFs.txt | grep -v "NTC")
 bams=$(for s in $samples; do echo /data/results/$seqId/$panel/$s/"$seqId"_"$s".bam ;done)
 
@@ -25,12 +30,13 @@ bams=$(for s in $samples; do echo /data/results/$seqId/$panel/$s/"$seqId"_"$s".b
 # 1. RUN FOR ALL SAMPLES IN RUN
 $cnvkit autobin $bams -t $vendorCaptureBed -g /data/db/human/cnvkit/access-excludes.hg19.bed --annotate /data/db/human/cnvkit/refFlat.txt 
 
+# keeps track of which samples have already been processed with CNVKit
 if [ -e /data/results/$seqId/$panel/samplesCNVKit.txt ]
 then
     rm /data/results/$seqId/$panel/samplesCNVKit.txt
 fi
 
-
+# schedule each sample to be processed with 1_cnvkit.sh
 for i in ${samples[@]}
 do
     sample=$(basename $i)
@@ -67,13 +73,13 @@ do
     cp /data/results/$seqId/$panel/"$i".antitargetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
     cp /data/results/$seqId/$panel/*.target.bed /data/results/$seqId/$panel/$i/CNVKit/
     cp /data/results/$seqId/$panel/*.antitarget.bed /data/results/$seqId/$panel/$i/CNVKit/
-#    cp /data/results/$seqId/$panel/"$i".segmetrics.cns /data/results/$seqId/$panel/$test_sample/CNVKit/
+    cp /data/results/$seqId/$panel/"$i".segmetrics.cns /data/results/$seqId/$panel/$test_sample/CNVKit/
 
 done
 
 # tidy
-# rm /data/results/$seqId/$panel/*.targetcoverage.cnn
-# rm /data/results/$seqId/$panel/*.antitargetcoverage.cnn
-# rm /data/results/$seqId/$panel/*.segmetrics.cns
-# rm /data/results/$seqId/$panel/*.target.bed
-# rm /data/results/$seqId/$panel/*.antitarget.bed
+rm /data/results/$seqId/$panel/*.targetcoverage.cnn
+rm /data/results/$seqId/$panel/*.antitargetcoverage.cnn
+rm /data/results/$seqId/$panel/*.target.bed
+rm /data/results/$seqId/$panel/*.antitarget.bed
+rm /data/results/$seqId/$panel/*.segmetrics.cns
