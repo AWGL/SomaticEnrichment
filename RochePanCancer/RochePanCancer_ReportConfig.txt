@@ -1,5 +1,5 @@
 Filter	filter
-Frequency	format
+AF	format	Frequency
 DP	info	Depth
 GT	format	Genotype
 GQ	format	Quality
