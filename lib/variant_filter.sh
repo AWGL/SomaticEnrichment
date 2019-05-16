@@ -25,6 +25,7 @@ $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir
     --contamination-table calculateContamination.table \
     --min-base-quality-score $minBQS \
     --min-median-mapping-quality $minMQS \
+    --tumor-lod 4.7 \
     --output "$seqId"_"$sampleId"_filtered.vcf.gz \
     --verbosity ERROR \
     --QUIET true
