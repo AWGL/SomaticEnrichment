@@ -28,3 +28,4 @@ sampleId=$2
     VERBOSITY=ERROR
 
 rm "$seqId"_"$sampleId"_*_aligned.bam
+rm "$seqId"_"$sampleId"_*_aligned.bai
