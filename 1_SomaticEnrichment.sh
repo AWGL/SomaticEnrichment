@@ -76,8 +76,9 @@ else
     echo "skipping base quality recalibration"
     cp "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId".bam
     cp "$seqId"_"$sampleId"_rmdup.bai "$seqId"_"$sampleId".bai
-    rm "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId"_rmdup.bai
 fi
+
+rm "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId"_rmdup.bai
 
 # post-alignment QC
 ./lib/post_alignment_qc.sh \
