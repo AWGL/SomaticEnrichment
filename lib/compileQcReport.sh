@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+# Christopher Medway AWMGS
+# compiles a file of useful QC metrics from the multitude of PICARD metrics
+
 seqId=$1
 sampleId=$2
 panel=$3

@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-# Description: combine forwards and reverse reads into single
-#              unmapped bam file. 
+# Christopher Medway AWMGS
+# generates uBAM from R1 and R2 reads for a given sample / lane
 
 seqId=$1
 sampleId=$2

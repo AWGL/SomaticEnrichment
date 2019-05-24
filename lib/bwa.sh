@@ -1,7 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "extracting reads from to ubam and passing to BWA"
+# Christopher Medway AWMGS
+# runs BWA-mem over given sample: input unaligned BAM output aligned BAM
+
+echo "extracting reads from to ubam and passing to BWA for alignment"
 
 seqId=$1
 sampleId=$2
@@ -59,6 +62,4 @@ laneId=$3
         
 
 # clean
-#rm "$seqId"_"$sampleId"_"$laneId"_R1.fastq
-#rm "$seqId"_"$sampleId"_"$laneId"_R2.fastq
-#rm "$seqId"_"$sampleId"_"$laneId"_unaligned.bam
+rm "$seqId"_"$sampleId"_"$laneId"_unaligned.bam

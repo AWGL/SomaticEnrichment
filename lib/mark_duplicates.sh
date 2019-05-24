@@ -1,6 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
+# Christopher Medway AWMGS
+# marks duplicated for all BAM files that have been generated for a sample
+# merges across lanes
+
 echo "removing duplicates and merging lanes"
 
 seqId=$1
@@ -22,3 +26,5 @@ sampleId=$2
     TMP_DIR=/state/partition1/tmpdir \
     QUIET=true \
     VERBOSITY=ERROR
+
+rm "$seqId"_"$sampleId"_*_aligned.bam

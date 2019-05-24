@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+# Christopher Medway AWMGS
+# base quality score recalibration
+
 echo "performing base quality recalibraton"
 
 seqId=$1
@@ -8,10 +11,9 @@ sampleId=$2
 panel=$3
 vendorCaptureBed=$4
 padding=$5
+gatk4=$6
 
-gatk=/share/apps/GATK-distros/GATK_4.0.4.0/gatk
-
-$gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
+$gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     BaseRecalibrator \
     --reference /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
     --known-sites /state/partition1/db/human/gatk/2.8/b37/dbsnp_138.b37.vcf \
@@ -24,7 +26,7 @@ $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir
     --verbosity ERROR \
     --QUIET true
 
-$gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
+$gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     ApplyBQSR \
     --reference /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
     --bqsr-recal-file "$seqId"_"$sampleId"_recal_data.table \
@@ -33,7 +35,7 @@ $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir
     --QUIET true \
     --verbosity ERROR
 
-$gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
+$gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     BaseRecalibrator \
     --reference /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
     --known-sites /state/partition1/db/human/gatk/2.8/b37/dbsnp_138.b37.vcf \
@@ -46,7 +48,7 @@ $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir
     --verbosity ERROR \
     --QUIET true
 
-$gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
+$gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     AnalyzeCovariates \
     -before "$seqId"_"$sampleId"_recal_data.table \
     -after "$seqId"_"$sampleId"_post_recal_data.table \

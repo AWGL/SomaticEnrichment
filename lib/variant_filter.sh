@@ -1,56 +1,61 @@
 #!/bin/bash
 set -euo pipefail
 
+# Christopher Medway AWMGS
+# Applies filter flags to variant calls.
+# Hard filters rare variants (<1%) and only keeps variants
+# with PASS, germline_risk and/or clustered_event in FILTER column
+
 seqId=$1
 sampleId=$2
-minBQS=$3
-minMQS=$4
+panel=$3
+minBQS=$4
+minMQS=$5
+gatk4=$6
 
-gatk=/share/apps/GATK-distros/GATK_4.0.4.0/gatk
-
-$gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
+$gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     GetPileupSummaries \
     -V /data/db/human/gnomad/gnomad.exomes.r2.0.1.sites.common.bialleleic.vcf.gz \
-    -I "$seqId"_"$sampleId".bam \
-    -O getpileupsummaries.table    
+    -I /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".bam \
+    -O /data/results/$seqId/$panel/$sampleId/getpileupsummaries.table    
 
-$gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
+$gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     CalculateContamination \
-    -I getpileupsummaries.table \
-    -O calculateContamination.table
+    -I /data/results/$seqId/$panel/$sampleId/getpileupsummaries.table \
+    -O /data/results/$seqId/$panel/$sampleId/calculateContamination.table
 
-$gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
+$gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     FilterMutectCalls \
-    --variant "$seqId"_"$sampleId".vcf.gz \
-    --contamination-table calculateContamination.table \
+    --variant /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".vcf.gz \
+    --contamination-table /data/results/$seqId/$panel/$sampleId/calculateContamination.table \
     --min-base-quality-score $minBQS \
     --min-median-mapping-quality $minMQS \
     --tumor-lod 4.7 \
-    --output "$seqId"_"$sampleId"_filtered.vcf.gz \
+    --output /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filtered.vcf.gz \
     --verbosity ERROR \
     --QUIET true
 
-$gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
+$gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     CollectSequencingArtifactMetrics \
-    -I "$seqId"_"$sampleId".bam \
+    -I /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".bam \
     -O seqArtifacts \
     --FILE_EXTENSION ".txt" \
     -R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
     --VERBOSITY ERROR \
     --QUIET true
 
-$gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
+$gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     FilterByOrientationBias \
     -AM G/T \
     -AM C/T \
-    -V "$seqId"_"$sampleId"_filtered.vcf.gz \
-    -P seqArtifacts.pre_adapter_detail_metrics.txt \
-    -O "$seqId"_"$sampleId"_filteredStr.vcf.gz \
+    -V /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filtered.vcf.gz \
+    -P /data/results/$seqId/$panel/$sampleId/seqArtifacts.pre_adapter_detail_metrics.txt \
+    -O /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStr.vcf.gz \
     --verbosity ERROR \
     --QUIET true
 
 # split multialleleic calls onto separate line and filter SNVs / Indels < 1%
-/share/apps/bcftools-distros/bcftools-1.8/bin/bcftools norm -m - "$seqId"_"$sampleId"_filteredStr.vcf.gz |
+/share/apps/bcftools-distros/bcftools-1.8/bin/bcftools norm -m - /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStr.vcf.gz |
     /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools filter -e 'AF < 0.01' |
     /share/apps/bcftools-distros/bcftools-1.8/bin/bcftools view -e 'FILTER="multiallelic" ||
         FILTER="str_contraction"    ||
@@ -66,3 +71,6 @@ $gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir
         FILTER="duplicate_evidence" ||
         FILTER="panel_of_normals"' \
         "$seqId"_"$sampleId"_filteredStr.vcf.gz > "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf.gz
+
+rm /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filtered.vcf.gz
+rm /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".vcf.gz

@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+# Christopher Medway AWMGS
+# generation of PICARD metrics for each sample 
+
 seqId=$1
 sampleId=$2
 panel=$3
@@ -10,9 +13,6 @@ vendorPrimaryBed=$6
 padding=$7
 minBQS=$8
 minMQS=$9
-
-gatk=/share/apps/GATK-distros/GATK_4.0.4.0/gatk
-#gatk3=/share/apps/GATK-distros/GATK_3.8.0/GenomeAnalysisTK.jar
 
 #Convert capture BED to interval_list for later
 /share/apps/jre-distros/jre1.8.0_131/bin/java -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx2g \

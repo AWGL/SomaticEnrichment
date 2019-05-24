@@ -26,6 +26,10 @@ cp -r /data/diagnostics/pipelines/"$pipelineName"/"$pipelineName"-"$pipelineVers
 vendorCaptureBed=/data/diagnostics/pipelines/"$pipelineName"/"$pipelineName"-"$pipelineVersion"/"$panel"/180702_HG19_PanCancer_EZ_capture_targets.bed
 vendorPrimaryBed=/data/diagnostics/pipelines/"$pipelineName"/"$pipelineName"-"$pipelineVersion"/"$panel"/180702_HG19_PanCancer_EZ_primary_targets.bed
 
+# path go GATK versions
+gatk4=/share/apps/GATK-distros/GATK_4.0.4.0/gatk
+gatk3=/share/apps/GATK-distros/GATK_3.8.0/GenomeAnalysisTK.jar
+
 # define fastq variables
 for fastqPair in $(ls "$sampleId"_S*.fastq.gz | cut -d_ -f1-3 | sort | uniq)
 do
@@ -67,11 +71,12 @@ done
 # basequality recalibration
 # >100^6 on target bases required for this to be effective
 if [ "$includeBQSR = true" ] ; then
-    ./lib/bqsr.sh $seqId $sampleId $panel $vendorCaptureBed $padding
+    ./lib/bqsr.sh $seqId $sampleId $panel $vendorCaptureBed $padding $gatk4
 else
     echo "skipping base quality recalibration"
     cp "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId".bam
     cp "$seqId"_"$sampleId"_rmdup.bai "$seqId"_"$sampleId".bai
+    rm "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId"_rmdup.bai
 fi
 
 # post-alignment QC
@@ -97,19 +102,20 @@ fi
     $vendorCaptureBed \
     $padding \
     $minBQS \
-    $minMQS
+    $minMQS \
+    $gatk3
 
 # pull all the qc data together
 ./lib/compileQcReport.sh $seqId $sampleId $panel
 
 # variant calling
-./lib/mutect2.sh $seqId $sampleId $pipelineName $version $panel $padding $minBQS $minMQS $vendorCaptureBed
+./lib/mutect2.sh $seqId $sampleId $pipelineName $version $panel $padding $minBQS $minMQS $vendorCaptureBed $gatk4
 
 # variant filter
-./lib/variant_filter.sh $seqId $sampleId $minBQS $minMQS
+./lib/variant_filter.sh $seqId $sampleId $panel $minBQS $minMQS $gatk4
 
 # annotation
-./lib/annotation.sh $seqId $sampleId
+./lib/annotation.sh $seqId $sampleId $panel $gatk4
 
 # generate variant reports
 ./lib/hotspot_variants.sh $seqId $sampleId $panel $pipelineName $pipelineVersion
@@ -124,10 +130,9 @@ fi
 ./lib/make_variant_report.sh $seqId $sampleId $referral $worklistId
 
 
-
 ## CNV ANALYSIS
 
-# only run if all samples have completed
+# only run cnv calling if all samples have completed this far
 numberSamplesInVcf=$(cat ../sampleVCFs.txt | uniq | wc -l)
 numberSamplesInProject=$(find ../ -maxdepth 2 -mindepth 2 | grep .variables | uniq | wc -l)
 
