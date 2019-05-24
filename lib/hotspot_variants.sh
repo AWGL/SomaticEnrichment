@@ -14,7 +14,7 @@ source /home/transfer/miniconda3/bin/activate vcf_parse
     
 mkdir -p hotspot_variants
 
-python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.1/vcf_parse.py \
+python /data/diagnostics/apps/vcf_parse/vcf_parse-0.1.2/vcf_parse.py \
     --transcripts /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/$panel/"$panel"_PreferredTranscripts.txt \
     --transcript_strictness low \
     --config /data/diagnostics/pipelines/$pipelineName/"$pipelineName"-"$pipelineVersion"/$panel/"$panel"_ReportConfig.txt \
