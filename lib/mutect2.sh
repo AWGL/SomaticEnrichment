@@ -13,7 +13,7 @@ padding=$6
 minBQS=$7
 minMQS=$8
 vendorCaptureBed=$9
-gath4=${10}
+gatk4=${10}
 
 $gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     Mutect2 \
