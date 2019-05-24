@@ -35,7 +35,7 @@ perl /share/apps/vep-distros/ensembl-tools-release-86/scripts/variant_effect_pre
     --custom /data/db/human/cosmic/b37/cosmic_78.b37.vcf.gz,COSMIC,vcf,exact,0
 
 # index and validation
-$gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
+$gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g" \
     IndexFeatureFile \
     -F /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf
 

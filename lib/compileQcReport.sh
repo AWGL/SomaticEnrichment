@@ -40,7 +40,7 @@ countQCFlagFails() {
 
 rawSequenceQuality=PASS
 
-for report in $dir/"$seqId"_"$sampleId"_*_fastqc.txt;
+for report in $dir/FASTQC/"$seqId"_"$sampleId"_*_fastqc.txt;
 do
     if [ $(countQCFlagFails $report) -gt 0 ]; then
         rawSequenceQuality=FAIL
