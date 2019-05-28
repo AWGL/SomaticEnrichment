@@ -53,3 +53,6 @@ $gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdi
     -before "$seqId"_"$sampleId"_recal_data.table \
     -after "$seqId"_"$sampleId"_post_recal_data.table \
     -plots "$seqId"_"$sampleId"_BQSR.pdf
+
+rm *post_recal_data.table
+rm *recal_data.table

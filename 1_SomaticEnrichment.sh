@@ -149,3 +149,7 @@ fi
 
 rm /data/results/$seqId/$panel/*.cnn
 rm /data/results/$seqId/$panel/*.bed
+rm /data/results/$seqId/$panel/*.interval_list
+rm /data/results/$seqId/$panel/seqArtifacts.*
+rm /data/results/$seqId/$panel/getpileupsummaries.table
+rm /data/results/$seqId/$panel/calculateContamination.table

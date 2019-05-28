@@ -42,7 +42,6 @@ minMQS=$9
     -jar /share/apps/picard-tools-distros/picard-tools-2.18.5/picard.jar CollectInsertSizeMetrics \
     I="$seqId"_"$sampleId".bam \
     O="$seqId"_"$sampleId"_InsertMetrics.txt \
-    H="$seqId"_"$sampleId"_InsertMetrics.pdf \
     MAX_RECORDS_IN_RAM=2000000 \
     TMP_DIR=/state/partition1/tmpdir
 

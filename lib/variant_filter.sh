@@ -74,3 +74,5 @@ $gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdi
 
 rm /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filtered.vcf.gz
 rm /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".vcf.gz
+rm /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filtered.vcf.gz.tbi
+rm /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".vcf.gz.tbi

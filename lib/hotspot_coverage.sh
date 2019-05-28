@@ -115,3 +115,6 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
 fi
 
 rm vendorCaptureBed_100pad.bed
+rm *interval_statistics
+rm *interval_summary
+rm *sample_statistics
