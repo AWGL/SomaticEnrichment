@@ -17,7 +17,7 @@ version="0.0.1"
 . *.variables
 
 # copy script library
-cp -r /data/diagnostics/pipelines/"$pipelineName"/"$pipelineName"-"$pipelineVersion"/lib /data/results/"$seqId"/"$panel"/"$sampleId"/
+cp -r /data/diagnostics/pipelines/"$pipelineName"/"$pipelineName"-"$pipelineVersion"/SomaticEnrichmentLib-"$version" /data/results/"$seqId"/"$panel"/"$sampleId"/
 
 # load pipeline variables
 . /data/diagnostics/pipelines/"$pipelineName"/"$pipelineName"-"$pipelineVersion"/"$panel"/"$panel".variables
@@ -39,7 +39,7 @@ do
     read2Fastq=$(ls "$fastqPair"_R2_*fastq.gz)
 
     # cutadapt
-    ./lib/cutadapt.sh \
+    ./SomaticEnrichmentLib-"$version"/cutadapt.sh \
         $seqId \
         $sampleId \
         $laneId \
@@ -49,10 +49,10 @@ do
         $read2Adapter
 
     # fastqc
-    ./lib/fastqc.sh $seqId $sampleId $laneId
+    ./SomaticEnrichmentLib-"$version"/fastqc.sh $seqId $sampleId $laneId
 
      # fastq to ubam
-    ./lib/fastq_to_ubam.sh \
+    ./SomaticEnrichmentLib-"$version"/fastq_to_ubam.sh \
         $seqId \
         $sampleId \
         $laneId \
@@ -61,17 +61,17 @@ do
         $expectedInsertSize
 
     # bwa
-    ./lib/bwa.sh $seqId $sampleId $laneId
+    ./SomaticEnrichmentLib-"$version"/bwa.sh $seqId $sampleId $laneId
     
 done
 
 # merge & mark duplicate reads
-./lib/mark_duplicates.sh $seqId $sampleId 
+./SomaticEnrichmentLib-"$version"/mark_duplicates.sh $seqId $sampleId 
 
 # basequality recalibration
 # >100^6 on target bases required for this to be effective
 if [ "$includeBQSR = true" ] ; then
-    ./lib/bqsr.sh $seqId $sampleId $panel $vendorCaptureBed $padding $gatk4
+    ./SomaticEnrichmentLib-"$version"/bqsr.sh $seqId $sampleId $panel $vendorCaptureBed $padding $gatk4
 else
     echo "skipping base quality recalibration"
     cp "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId".bam
@@ -81,7 +81,7 @@ fi
 rm "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId"_rmdup.bai
 
 # post-alignment QC
-./lib/post_alignment_qc.sh \
+./SomaticEnrichmentLib-"$version"/post_alignment_qc.sh \
     $seqId \
     $sampleId \
     $panel \
@@ -93,7 +93,7 @@ rm "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId"_rmdup.bai
     $minMQS
 
 # coverage calculations
-./lib/hotspot_coverage.sh \
+./SomaticEnrichmentLib-"$version"/hotspot_coverage.sh \
     $seqId \
     $sampleId \
     $panel \
@@ -107,19 +107,19 @@ rm "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId"_rmdup.bai
     $gatk3
 
 # pull all the qc data together
-./lib/compileQcReport.sh $seqId $sampleId $panel
+./SomaticEnrichmentLib-"$version"/compileQcReport.sh $seqId $sampleId $panel
 
 # variant calling
-./lib/mutect2.sh $seqId $sampleId $pipelineName $version $panel $padding $minBQS $minMQS $vendorCaptureBed $gatk4
+./SomaticEnrichmentLib-"$version"/mutect2.sh $seqId $sampleId $pipelineName $version $panel $padding $minBQS $minMQS $vendorCaptureBed $gatk4
 
 # variant filter
-./lib/variant_filter.sh $seqId $sampleId $panel $minBQS $minMQS $gatk4
+./SomaticEnrichmentLib-"$version"/variant_filter.sh $seqId $sampleId $panel $minBQS $minMQS $gatk4
 
 # annotation
-./lib/annotation.sh $seqId $sampleId $panel $gatk4
+./SomaticEnrichmentLib-"$version"/annotation.sh $seqId $sampleId $panel $gatk4
 
 # generate variant reports
-./lib/hotspot_variants.sh $seqId $sampleId $panel $pipelineName $pipelineVersion
+./SomaticEnrichmentLib-"$version"/hotspot_variants.sh $seqId $sampleId $panel $pipelineName $pipelineVersion
 
 # add samplename to run-level file if vcf detected
 if [ -e /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".vcf.gz ]
@@ -128,7 +128,7 @@ then
 fi
 
 # generate excel reports using virtual Hood
-./lib/make_variant_report.sh $seqId $sampleId $referral $worklistId
+./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $sampleId $referral $worklistId
 
 
 ## CNV ANALYSIS
@@ -142,7 +142,7 @@ then
 
     echo "running CNVKit as $numberSamplesInVcf samples have completed SNV calling"
     # run cnv kit
-    ./lib/cnvkit.sh $seqId $panel $vendorPrimaryBed
+    ./SomaticEnrichmentLib-"$version"/cnvkit.sh $seqId $panel $vendorPrimaryBed $version
 else
     echo "not all samples have been run yet!"
 fi
