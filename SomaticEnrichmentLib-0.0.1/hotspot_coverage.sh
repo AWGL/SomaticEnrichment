@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Christopher Medway AWMGS
-# Performs all the coverage calculation across the panel and hotspot regions
+# Performs all the coverage calculation across the panel and hotspot regions at given depth(s)
 
 seqId=$1
 sampleId=$2
@@ -15,6 +15,9 @@ padding=$8
 minBQS=$9
 minMQS=${10}
 gatk3=${11}
+
+# minimumCoverage to array COV
+IFS=',' read -r -a COV <<< "${minimumCoverage}"
 
 # add given padding to vendor bedfile
 /share/apps/bedtools-distros/bedtools-2.26.0/bin/bedtools \
@@ -33,7 +36,7 @@ gatk3=${11}
     --countType COUNT_FRAGMENTS \
     --minMappingQuality $minMQS \
     --minBaseQuality $minBQS \
-    -ct $minimumCoverage \
+    -ct ${COV[0]} \
     --omitLocusTable \
     -rf MappingQualityUnavailable \
     -dt NONE
@@ -47,10 +50,15 @@ sed 's/:/\t/g' /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthO
 # tabix index depth file
 /share/apps/htslib-distros/htslib-1.4.1/tabix -b 2 -e 2 -s 1 /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz
 
-# loop over referral bedfiles and generate coverage report 
-if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage ];then
+# loop over each depth threshold (i.e. 250x, 135x)
+for depth in "${COV[@]}"
+do
+    echo $depth
 
-    mkdir -p /data/results/$seqId/$panel/$sampleId/hotspot_coverage
+    # loop over referral bedfiles and generate coverage report 
+    if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage ];then
+
+    mkdir -p /data/results/$seqId/$panel/$sampleId/"hotspot_coverage_$depth"
 
     source /home/transfer/miniconda3/bin/activate CoverageCalculatorPy
 
@@ -62,23 +70,23 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
         python /home/transfer/pipelines/CoverageCalculatorPy/CoverageCalculatorPy.py \
             -B $bedFile \
             -D /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_DepthOfCoverage.gz \
-            --depth $minimumCoverage \
+            --depth $depth \
             --padding 0 \
             --groupfile /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage/"$name".groups \
             --outname "$sampleId"_"$name" \
-            --outdir /data/results/$seqId/$panel/$sampleId/hotspot_coverage/
+            --outdir /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/
 
         # remove header from gaps file
-        if [[ $(wc -l < /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_"$name".gaps) -eq 1 ]]; then
+        if [[ $(wc -l < /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_"$name".gaps) -eq 1 ]]; then
             
             # no gaps
-            touch /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_"$name".nohead.gaps
+            touch /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_"$name".nohead.gaps
         else
             # gaps
-            grep -v '^#' /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_"$name".gaps > /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_"$name".nohead.gaps
+            grep -v '^#' /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_"$name".gaps > /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_"$name".nohead.gaps
         fi
 
-        rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_"$name".gaps
+        rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_"$name".gaps
 
     done
 
@@ -88,7 +96,7 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
     # add hgvs nomenclature to gaps
     source /home/transfer/miniconda3/bin/activate bed2hgvs
 
-    for gapsFile in /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*genescreen.nohead.gaps /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*hotspots.nohead.gaps; do
+    for gapsFile in /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/*genescreen.nohead.gaps /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/*hotspots.nohead.gaps; do
 
         name=$(echo $(basename $gapsFile) | cut -d"." -f1)
         echo $name
@@ -96,23 +104,25 @@ if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion
         python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/bed2hgvs.py \
            --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1/configs/cluster.yaml \
             --input $gapsFile \
-            --output /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".gaps \
+            --output /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$name".gaps \
             --transcript_map /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0.0.1/RochePanCancer/RochePanCancer_PreferredTranscripts.txt
 
-        rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".nohead.gaps
+        rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$name".nohead.gaps
         # mv /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".hgvs.gaps /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".gaps
     done
     
     source /home/transfer/miniconda3/bin/deactivate
 
     # combine all total coverage files
-    if [ -f /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt ]; then rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt; fi
-    cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.totalCoverage | grep "FEATURE" | head -n 1 >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt
-    cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$sampleId"_coverage.txt
-    rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*.totalCoverage
-    rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage/*combined*
+    if [ -f /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_coverage.txt ]; then rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_coverage.txt; fi
+    cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/*.totalCoverage | grep "FEATURE" | head -n 1 >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_coverage.txt
+    cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_coverage.txt
+    rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/*.totalCoverage
+    rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/*combined*
 
-fi
+    fi
+
+done
 
 rm vendorCaptureBed_100pad.bed
 rm *interval_statistics
