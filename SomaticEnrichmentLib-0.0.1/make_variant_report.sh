@@ -8,7 +8,8 @@ worksheet=$4
 
 source /home/transfer/miniconda/bin/activate VirtualHood
 
-    python virtualhood.py $seqId $sampleId $worksheet $referral
+    python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $worksheet $referral 250x
+    python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $worksheet $referral 135x
 
 source /home/transfer/miniconda/bin/deactivate
 
