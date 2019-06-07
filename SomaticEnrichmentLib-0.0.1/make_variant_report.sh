@@ -10,11 +10,14 @@ source /home/transfer/miniconda3/bin/activate VirtualHood
 
         sampleId=$(basename $i)
 
-        . /data/results/$seqId/$panel/$sampleId/"$sampleId".variables
-        
-        python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worklistId $referral 250x
-        python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worklistId $referral 135x
-
+        if [ $sampleId == 'NTC' ] do
+            echo "skipping $sampleId worksheet"
+        else
+            
+            . /data/results/$seqId/$panel/$sampleId/"$sampleId".variables
+            python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worklistId $referral 250x
+            python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worklistId $referral 135x
+        fi
     done
 
 source /home/transfer/miniconda3/bin/deactivate
