@@ -55,10 +55,12 @@ for depth in "${COV[@]}"
 do
     echo $depth
 
+    hscov_outdir=/data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"x/
+
     # loop over referral bedfiles and generate coverage report 
     if [ -d /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage ];then
 
-    mkdir -p /data/results/$seqId/$panel/$sampleId/"hotspot_coverage_$depth"
+    mkdir -p $hscov_outdir
 
     source /home/transfer/miniconda3/bin/activate CoverageCalculatorPy
 
@@ -74,19 +76,19 @@ do
             --padding 0 \
             --groupfile /data/diagnostics/pipelines/$pipelineName/$pipelineName-$pipelineVersion/$panel/hotspot_coverage/"$name".groups \
             --outname "$sampleId"_"$name" \
-            --outdir /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/
+            --outdir $hscov_outdir
 
         # remove header from gaps file
-        if [[ $(wc -l < /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_"$name".gaps) -eq 1 ]]; then
+        if [[ $(wc -l < $hscov_outdir/"$sampleId"_"$name".gaps) -eq 1 ]]; then
             
             # no gaps
-            touch /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_"$name".nohead.gaps
+            touch $hscov_outdir/"$sampleId"_"$name".nohead.gaps
         else
             # gaps
-            grep -v '^#' /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_"$name".gaps > /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_"$name".nohead.gaps
+            grep -v '^#' $hscov_outdir/"$sampleId"_"$name".gaps > $hscov_outdir/"$sampleId"_"$name".nohead.gaps
         fi
 
-        rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_"$name".gaps
+        rm $hscov_outdir/"$sampleId"_"$name".gaps
 
     done
 
@@ -96,7 +98,7 @@ do
     # add hgvs nomenclature to gaps
     source /home/transfer/miniconda3/bin/activate bed2hgvs
 
-    for gapsFile in /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/*genescreen.nohead.gaps /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/*hotspots.nohead.gaps; do
+    for gapsFile in $hscov_outdir/*genescreen.nohead.gaps $hscov_outdir/*hotspots.nohead.gaps; do
 
         name=$(echo $(basename $gapsFile) | cut -d"." -f1)
         echo $name
@@ -104,21 +106,20 @@ do
         python /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1.1/bed2hgvs.py \
            --config /data/diagnostics/apps/bed2hgvs/bed2hgvs-0.1/configs/cluster.yaml \
             --input $gapsFile \
-            --output /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$name".gaps \
+            --output $hscov_outdir/"$name".gaps \
             --transcript_map /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0.0.1/RochePanCancer/RochePanCancer_PreferredTranscripts.txt
 
-        rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$name".nohead.gaps
-        # mv /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".hgvs.gaps /data/results/$seqId/$panel/$sampleId/hotspot_coverage/"$name".gaps
+        rm $hscov_outdir/"$name".nohead.gaps
     done
     
     source /home/transfer/miniconda3/bin/deactivate
 
     # combine all total coverage files
-    if [ -f /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_coverage.txt ]; then rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_coverage.txt; fi
-    cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/*.totalCoverage | grep "FEATURE" | head -n 1 >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_coverage.txt
-    cat /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/"$sampleId"_coverage.txt
-    rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/*.totalCoverage
-    rm /data/results/$seqId/$panel/$sampleId/hotspot_coverage_"$depth"/*combined*
+    if [ -f $hscov_outdir/"$sampleId"_coverage.txt ]; then rm $hscov_outdir/"$sampleId"_coverage.txt; fi
+    cat $hscov_outdir/*.totalCoverage | grep "FEATURE" | head -n 1 >> $hscov_outdir/"$sampleId"_coverage.txt
+    cat $hscov_outdir/*.totalCoverage | grep -v "FEATURE" | grep -vP "combined_\\S+_GENE" >> $hscov_outdir/"$sampleId"_coverage.txt
+    rm $hscov_outdir/*.totalCoverage
+    rm $hscov_outdir/*combined*
 
     fi
 
