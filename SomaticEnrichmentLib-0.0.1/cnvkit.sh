@@ -48,7 +48,7 @@ done
 
 
 numberOfProcessedCnvFiles=0
-numberOfInputFiles=$(wc -l < /data/results/$seqId/$panel/sampleVCFs.txt)
+numberOfInputFiles=$(cat /data/results/$seqId/$panel/sampleVCFs.txt | grep -v 'NTC' | wc -l)
 
 until [ $numberOfProcessedCnvFiles -eq $numberOfInputFiles ]
 do
