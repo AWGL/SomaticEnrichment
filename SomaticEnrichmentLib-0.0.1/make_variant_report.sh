@@ -10,7 +10,7 @@ source /home/transfer/miniconda3/bin/activate VirtualHood
 
         sampleId=$(basename $i)
 
-        if [ $sampleId == 'NTC' ] do
+        if [ $sampleId == 'NTC' ]; then
             echo "skipping $sampleId worksheet"
         else
             

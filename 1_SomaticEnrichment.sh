@@ -122,30 +122,33 @@ rm "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId"_rmdup.bai
 ./SomaticEnrichmentLib-"$version"/hotspot_variants.sh $seqId $sampleId $panel $pipelineName $pipelineVersion
 
 # add samplename to run-level file if vcf detected
-if [ -e /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".vcf.gz ]
+if [ -e /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf ]
 then
     echo $sampleId >> /data/results/$seqId/$panel/sampleVCFs.txt
 fi
 
-# generate excel reports using virtual Hood
-./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $sampleId $referral $worklistId
 
+## POST SNV CALLING ANALYSES
 
-## CNV ANALYSIS
-
-# only run cnv calling if all samples have completed this far
 numberSamplesInVcf=$(cat ../sampleVCFs.txt | uniq | wc -l)
 numberSamplesInProject=$(find ../ -maxdepth 2 -mindepth 2 | grep .variables | uniq | wc -l)
 
+# only the last sample to complete SNV calling will run the following
 if [ $numberSamplesInVcf -eq $numberSamplesInProject ]
 then
 
     echo "running CNVKit as $numberSamplesInVcf samples have completed SNV calling"
     # run cnv kit
     ./SomaticEnrichmentLib-"$version"/cnvkit.sh $seqId $panel $vendorPrimaryBed $version
+
+    # generate worksheets
+    ./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $panel    
+
 else
     echo "not all samples have been run yet!"
 fi
+
+
 
 rm /data/results/$seqId/$panel/*.cnn
 rm /data/results/$seqId/$panel/*.bed

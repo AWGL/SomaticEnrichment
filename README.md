@@ -13,3 +13,4 @@ command must be issues inside sample directory; which contains:
 2. SomaticEnrichmentLib-{version} library
 3. sample fastq files
 
+The no template control must be names NTC
