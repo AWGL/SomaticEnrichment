@@ -2,14 +2,20 @@
 set -euo pipefail
 
 seqId=$1
-sampleId=$2
-referral=$3
-worksheet=$4
-
+panel=$2
+    
 source /home/transfer/miniconda3/bin/activate VirtualHood
 
-    python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worksheet $referral 250x
-    python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worksheet $referral 135x
+    for i in /data/results/$seqId/$panel/*/; do
+
+        sampleId=$(basename $i)
+
+        . /data/results/$seqId/$panel/$sampleId/"$sampleId".variables
+        
+        python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worklistId $referral 250x
+        python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worklistId $referral 135x
+
+    done
 
 source /home/transfer/miniconda3/bin/deactivate
 
