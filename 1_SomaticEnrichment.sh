@@ -140,13 +140,15 @@ then
     echo "running CNVKit as $numberSamplesInVcf samples have completed SNV calling"
     # run cnv kit
     ./SomaticEnrichmentLib-"$version"/cnvkit.sh $seqId $panel $vendorPrimaryBed $version
-
+ 
     # generate worksheets
     ./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $panel    
 
 else
-    echo "not all samples have been run yet!"
+    echo "not all samples have completed running. Finising process for sam."
 fi
+
+
 
 
 
