@@ -121,6 +121,9 @@ rm "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId"_rmdup.bai
 # generate variant reports
 ./SomaticEnrichmentLib-"$version"/hotspot_variants.sh $seqId $sampleId $panel $pipelineName $pipelineVersion
 
+# generate manta reports
+./SomaticEnrichmentLib-"$version"/hotspot_variants.sh $seqId $sampleId $panel $vendorPrimaryBed
+
 # add samplename to run-level file if vcf detected
 if [ -e /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf ]
 then

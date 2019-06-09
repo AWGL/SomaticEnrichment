@@ -9,18 +9,26 @@ sampleId=$2
 panel=$3
 primaryBed=$4
 
-mkdir -p /data/results/$seqId/$panel/$sampleId/MANTA/
+if [ -d /data/results/$seqId/$panel/$sampleId/MANTA ]
+then
+    rm -r /data/results/$seqId/$panel/$sampleId/MANTA
+fi
+
+
+mkdir /data/results/$seqId/$panel/$sampleId/MANTA/
 
 source /home/transfer/miniconda3/bin/activate manta
+
+cat $primaryBed | bgzip > /data/results/$seqId/$panel/$sampleId/MANTA/callRegions.bed.gz
+tabix -p bed  /data/results/$seqId/$panel/$sampleId/MANTA/callRegions.bed.gz
 
 configManta.py \
     --tumorBam /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".bam \
     --referenceFasta /data/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
-    --runDir  /data/results/$seqId/$panel/$sampleId/MANTA/
-    --exome
-    --callRegions $primaryBed
+    --runDir  /data/results/$seqId/$panel/$sampleId/MANTA/ \
+    --exome \
+    --callRegions /data/results/$seqId/$panel/$sampleId/MANTA/callRegions.bed.gz
 
-
-runWorkflow.py
+/data/results/$seqId/$panel/$sampleId/MANTA/runWorkflow.py -m local
 
 source /home/transfer/miniconda3/bin/deactivate
