@@ -69,8 +69,7 @@ $gatk4 --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdi
         FILTER="artifact_in_normal" ||
         FILTER="contamination"      ||
         FILTER="duplicate_evidence" ||
-        FILTER="panel_of_normals"' \
-        "$seqId"_"$sampleId"_filteredStr.vcf.gz > "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf.gz
+        FILTER="panel_of_normals"' > "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf.gz
 
 rm /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filtered.vcf.gz
 rm /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".vcf.gz
