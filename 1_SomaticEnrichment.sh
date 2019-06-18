@@ -151,13 +151,13 @@ else
     echo "not all samples have completed running. Finising process for sam."
 fi
 
+# generate combinedQC.txt
+python /data/diagnostics/scripts/merge_qc_files.py /data/results/$seqId/$panel/
 
-
-
-
+# tidy up
 rm /data/results/$seqId/$panel/*.cnn
 rm /data/results/$seqId/$panel/*.bed
-rm /data/results/$seqId/$panel/*.interval_list
-rm /data/results/$seqId/$panel/seqArtifacts.*
-rm /data/results/$seqId/$panel/getpileupsummaries.table
-rm /data/results/$seqId/$panel/calculateContamination.table
+rm /data/results/$seqId/$panel/*/*.interval_list
+rm /data/results/$seqId/$panel/*/seqArtifacts.*
+rm /data/results/$seqId/$panel/*/getpileupsummaries.table
+rm /data/results/$seqId/$panel/*/calculateContamination.table
