@@ -11,9 +11,9 @@ qsub 1_SomaticEnrichment.sh
 ```
 
 command must be issues inside sample directory; which contains:
-- `{samplename}.variables` file
-- `SomaticEnrichmentLib-{version}` library
-- `{sample}.fastq.gz` files
+`{samplename}.variables` file
+`SomaticEnrichmentLib-{version}` library
+`{sample}.fastq.gz` files
 
 The no template control must be named "NTC" in the SampleSheet.csv.
 
