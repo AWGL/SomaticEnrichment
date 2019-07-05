@@ -1,0 +1,31 @@
+Frequency	format
+DP	info	Depth
+GT	format	Genotype
+GQ	format	Quality
+Classification	custom
+Preferred	pref
+dbSNP	vep
+Cosmic	vep
+HGMD	vep
+ExAC_AFR_MAF	vep	ExAC_African
+ExAC_AMR_MAF	vep	ExAC_American
+ExAC_NFE_MAF	vep	ExAC_EuropeanNonFinnish
+ExAC_FIN_MAF	vep	ExAC_Finnish
+ExAC_EAS_MAF	vep	ExAC_EastAsian
+ExAC_SAS_MAF	vep	ExAC_SouthAsian
+ExAC_OTH_MAF	vep	ExAC_Other
+AFR_MAF	vep	1KG_African
+AMR_MAF	vep	1KG_American
+EUR_MAF	vep	1KG_European
+EAS_MAF	vep	1KG_EastAsian
+SAS_MAF	vep	1KG_SouthAsian
+SYMBOL	vep	Gene
+Feature	vep	Transcript
+HGVSc	vep
+HGVSp	vep
+Consequence	vep
+INTRON	vep
+EXON	vep
+SIFT	vep
+PolyPhen	vep
+CANONICAL	vep
