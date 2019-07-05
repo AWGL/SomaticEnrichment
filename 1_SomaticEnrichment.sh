@@ -11,7 +11,7 @@ cd $PBS_O_WORKDIR
 # Mode:        BY_SAMPLE
 # Use:         bash within sample directory
 
-version="0.0.1"
+version="1.0.0"
 
 # load sample variables
 . *.variables
