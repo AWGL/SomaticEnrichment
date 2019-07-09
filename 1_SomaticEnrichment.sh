@@ -106,9 +106,6 @@ rm "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId"_rmdup.bai
     $minMQS \
     $gatk3
 
-# pull all the qc data together
-./SomaticEnrichmentLib-"$version"/compileQcReport.sh $seqId $sampleId $panel
-
 # variant calling
 ./SomaticEnrichmentLib-"$version"/mutect2.sh $seqId $sampleId $pipelineName $version $panel $padding $minBQS $minMQS $vendorCaptureBed $gatk4
 
@@ -156,6 +153,9 @@ then
 else
     echo "not all samples have completed running. Finising process for sam."
 fi
+
+# pull all the qc data together
+./SomaticEnrichmentLib-"$version"/compileQcReport.sh $seqId $sampleId $panel
 
 # generate combinedQC.txt
 python /data/diagnostics/scripts/merge_qc_files.py /data/results/$seqId/$panel/
