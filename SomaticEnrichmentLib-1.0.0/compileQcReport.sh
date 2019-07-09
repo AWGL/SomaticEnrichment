@@ -47,7 +47,9 @@ do
     fi
 done
 
+# sex check
+ObsSex=$(cat /data/results/$seqId/$panel/$sampleId/CNVKit/*.sex | grep .cnr | cut -f2)
 
 #Print QC metrics
-echo -e "TotalReads\tRawSequenceQuality\tTotalTargetUsableBases\tPercentTargetUseableBases\tDuplicationRate\tPctSelectedBases\tPctTargetBasesCt\tMeanOnTargetCoverage\tMeanInsertSize\tSDInsertSize\tPercentMapped\tAtDropout\tGcDropout" > $dir/"$seqId"_"$sampleId"_QC.txt
-echo -e "$totalReads\t$rawSequenceQuality\t$totalTargetedUsableBases\t$percentUseableBasesOnTarget\t$duplicationRate\t$pctSelectedBases\t$pctTargetBasesCt\t$meanOnTargetCoverage\t$meanInsertSize\t$sdInsertSize\t$pctPfReadsAligned\t$atDropout\t$gcDropout" >> $dir/"$seqId"_"$sampleId"_QC.txt
+echo -e "TotalReads\tRawSequenceQuality\tGender\tTotalTargetUsableBases\tPercentTargetUseableBases\tDuplicationRate\tPctSelectedBases\tPctTargetBasesCt\tMeanOnTargetCoverage\tMeanInsertSize\tSDInsertSize\tPercentMapped\tAtDropout\tGcDropout" > $dir/"$seqId"_"$sampleId"_QC.txt
+echo -e "$totalReads\t$rawSequenceQuality\t$ObsSex\t$totalTargetedUsableBases\t$percentUseableBasesOnTarget\t$duplicationRate\t$pctSelectedBases\t$pctTargetBasesCt\t$meanOnTargetCoverage\t$meanInsertSize\t$sdInsertSize\t$pctPfReadsAligned\t$atDropout\t$gcDropout" >> $dir/"$seqId"_"$sampleId"_QC.txt

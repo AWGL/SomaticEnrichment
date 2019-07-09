@@ -124,7 +124,6 @@ else
     mv "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf "$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf
 fi
 
-
 # generate variant reports
 ./SomaticEnrichmentLib-"$version"/hotspot_variants.sh $seqId $sampleId $panel $pipelineName $pipelineVersion
 
@@ -160,6 +159,8 @@ fi
 
 # generate combinedQC.txt
 python /data/diagnostics/scripts/merge_qc_files.py /data/results/$seqId/$panel/
+
+
 
 # tidy up
 rm /data/results/$seqId/$panel/*.cnn
