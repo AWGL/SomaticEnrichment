@@ -116,7 +116,14 @@ rm "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId"_rmdup.bai
 ./SomaticEnrichmentLib-"$version"/variant_filter.sh $seqId $sampleId $panel $minBQS $minMQS $gatk4
 
 # annotation
-./SomaticEnrichmentLib-"$version"/annotation.sh $seqId $sampleId $panel $gatk4
+# check that there are called variants to annotate
+numVariants=$(cat "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf | grep -v '^#' | grep -v '^ ' | wc -l)
+if [ $numVariants > 0 ]; then
+    ./SomaticEnrichmentLib-"$version"/annotation.sh $seqId $sampleId $panel $gatk4
+else
+    mv "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf "$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf
+fi
+
 
 # generate variant reports
 ./SomaticEnrichmentLib-"$version"/hotspot_variants.sh $seqId $sampleId $panel $pipelineName $pipelineVersion
