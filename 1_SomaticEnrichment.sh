@@ -114,8 +114,7 @@ rm "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId"_rmdup.bai
 
 # annotation
 # check that there are called variants to annotate
-numVariants=$(cat "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf | grep -v '^#' | grep -v '^ ' | wc -l)
-if [ $numVariants > 0 ]; then
+if [ $(grep -v "#" "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf | grep -v '^ ' | wc -l) -ne 0 ]; then
     ./SomaticEnrichmentLib-"$version"/annotation.sh $seqId $sampleId $panel $gatk4
 else
     mv "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf "$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf
