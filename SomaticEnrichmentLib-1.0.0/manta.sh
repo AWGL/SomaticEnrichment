@@ -27,6 +27,7 @@ configManta.py \
     --referenceFasta /data/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
     --runDir  /data/results/$seqId/$panel/$sampleId/MANTA/ \
     --exome \
+    --quiet \
     --callRegions /data/results/$seqId/$panel/$sampleId/MANTA/callRegions.bed.gz
 
 /data/results/$seqId/$panel/$sampleId/MANTA/runWorkflow.py -m local
