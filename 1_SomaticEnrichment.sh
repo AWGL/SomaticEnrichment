@@ -123,9 +123,6 @@ fi
 # generate variant reports
 ./SomaticEnrichmentLib-"$version"/hotspot_variants.sh $seqId $sampleId $panel $pipelineName $pipelineVersion
 
-# generate manta reports
-./SomaticEnrichmentLib-"$version"/manta.sh $seqId $sampleId $panel $vendorPrimaryBed
-
 # add samplename to run-level file if vcf detected
 if [ -e /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf ]
 then
@@ -150,11 +147,16 @@ then
     ./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $panel    
 
 else
-    echo "not all samples have completed running. Finising process for sam."
+    echo "not all samples have completed running. Finising process for this sample."
 fi
 
 # pull all the qc data together
 ./SomaticEnrichmentLib-"$version"/compileQcReport.sh $seqId $sampleId $panel
+
+# run manta for all samples except NTC
+if [ $sampleId != 'NTC' ]; then 
+    ./SomaticEnrichmentLib-"$version"/manta.sh $seqId $sampleId $panel $vendorPrimaryBed
+fi
 
 # generate combinedQC.txt
 python /data/diagnostics/scripts/merge_qc_files.py /data/results/$seqId/$panel/
