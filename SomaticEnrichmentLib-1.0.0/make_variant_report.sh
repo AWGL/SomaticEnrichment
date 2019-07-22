@@ -15,7 +15,7 @@ source /home/transfer/miniconda3/bin/activate VirtualHood
         else
            
            # need to make sure CNV calling has completed (i.e. 2_cnvkit.sh has finished) before generating worksheet
-           while [ ! -f  /data/results/$seqId/$panel/$sampleId/2_cnvkit.sh.* ]
+           while [ ! -f  /data/results/$seqId/$panel/$sampleId/2_cnvkit.sh.o* ]
            do
                sleep 2
            done
