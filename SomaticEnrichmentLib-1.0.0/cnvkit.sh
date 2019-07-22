@@ -21,6 +21,12 @@ cd /data/results/$seqId/$panel/
 samples=$(cat /data/results/$seqId/$panel/sampleVCFs.txt | grep -v "NTC")
 bams=$(for s in $samples; do echo /data/results/$seqId/$panel/$s/"$seqId"_"$s".bam ;done)
 
+# samples that are not exceptable to use as part of a pooled reference
+#low_depth_sample=$(for i in /data/results/$seqId/$panel/*/*HsMetrics.txt; do 
+#    if [ $(cat $i | head -n 8 | cut -f 23 | tail -1 | cut -d . -f 1) -lt 100 ]; then echo $i | cut -d/ -f6; fi; 
+#done
+
+
 #  the access function has been pre-run
 #  only rerun this if using new annotations
 # $cnvkit access \

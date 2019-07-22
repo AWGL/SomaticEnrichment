@@ -48,7 +48,12 @@ do
 done
 
 # sex check
-ObsSex=$(cat /data/results/$seqId/$panel/$sampleId/CNVKit/*.sex | grep .cnr | cut -f2)
+# this file will not be avilable for NTC
+if [ $sampleId == "NTC" ]; then
+    ObeSex='Null'
+else
+    ObsSex=$(cat /data/results/$seqId/$panel/$sampleId/CNVKit/*.sex | grep .cnr | cut -f2)
+fi
 
 #Print QC metrics
 echo -e "TotalReads\tRawSequenceQuality\tGender\tTotalTargetUsableBases\tPercentTargetUseableBases\tDuplicationRate\tPctSelectedBases\tPctTargetBasesCt\tMeanOnTargetCoverage\tMeanInsertSize\tSDInsertSize\tPercentMapped\tAtDropout\tGcDropout" > $dir/"$seqId"_"$sampleId"_QC.txt
