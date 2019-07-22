@@ -31,8 +31,8 @@ echo "selecting common germline variants for CNV backbone"
     --select-type-to-include SNP \
     -O "$odir"/"$test_sample"_common.vcf \
     --restrict-alleles-to BIALLELIC \
-    --selectExpressions 'POP_AF > 0.01' \  # 'POP_AF' are the annoteted gnomad frequencies
-    --selectExpressions 'POP_AF < 0.99'    # so this command extracts common, germline SNVs 
+    --selectExpressions 'POP_AF > 0.01' \
+    --selectExpressions 'POP_AF < 0.99'
 
 echo "seqgmentation"
 $cnvkit segment "$odir"/"$test_sample".cnr -m cbs -o "$odir"/"$test_sample".cns --vcf "$odir"/"$test_sample"_common.vcf --drop-low-coverage
