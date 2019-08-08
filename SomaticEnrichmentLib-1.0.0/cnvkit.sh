@@ -37,11 +37,8 @@ bams=$(for s in $samples; do echo /data/results/$seqId/$panel/$s/"$seqId"_"$s".b
 # 1. RUN FOR ALL SAMPLES IN RUN
 $cnvkit autobin $bams -t $vendorCaptureBed -g /data/db/human/cnvkit/access-excludes.hg19.bed --annotate /data/db/human/cnvkit/refFlat.txt 
 
-# keeps track of which samples have already been processed with CNVKit
-if [ -e /data/results/$seqId/$panel/samplesCNVKit.txt ]
-then
-    rm /data/results/$seqId/$panel/samplesCNVKit.txt
-fi
+# keep track of which samples have already been processed with CNVKit - wipe file clean if it already exists
+> /data/results/$seqId/$panel/samplesCNVKit.txt
 
 # schedule each sample to be processed with 1_cnvkit.sh
 for i in ${samples[@]}
