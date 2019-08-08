@@ -148,6 +148,10 @@ then
     
     # pull all the qc data together and generate combinedQC.txt
     ./SomaticEnrichmentLib-"$version"/compileQcReport.sh $seqId $panel
+    
+    # tidy up
+    rm /data/results/$seqId/$panel/*.cnn
+    rm /data/results/$seqId/$panel/*.bed
 
 else
     echo "not all samples have completed running. Finising process for this sample."
@@ -160,17 +164,8 @@ if [ $sampleId != 'NTC' ]; then
 fi
 
 
-# pull all the qc data together
-#./SomaticEnrichmentLib-"$version"/compileQcReport.sh $seqId $sampleId $panel
-# generate combinedQC.txt
-#python /data/diagnostics/scripts/merge_qc_files.py /data/results/$seqId/$panel/ - moved to compileQcReport.sh
-
-
-
 # tidy up
-rm /data/results/$seqId/$panel/*.cnn
-rm /data/results/$seqId/$panel/*.bed
-rm /data/results/$seqId/$panel/*/*.interval_list
-rm /data/results/$seqId/$panel/*/seqArtifacts.*
-rm /data/results/$seqId/$panel/*/getpileupsummaries.table
-rm /data/results/$seqId/$panel/*/calculateContamination.table
+rm /data/results/$seqId/$panel/$sampleId/*.interval_list
+rm /data/results/$seqId/$panel/$sampleId/seqArtifacts.*
+rm /data/results/$seqId/$panel/$sampleId/getpileupsummaries.table
+rm /data/results/$seqId/$panel/$sampleId/calculateContamination.table
