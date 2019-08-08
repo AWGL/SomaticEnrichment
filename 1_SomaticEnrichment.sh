@@ -144,22 +144,26 @@ then
     ./SomaticEnrichmentLib-"$version"/cnvkit.sh $seqId $panel $vendorPrimaryBed $version
  
     # generate worksheets
-    ./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $panel    
+    ./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $panel
+    
+    # pull all the qc data together and generate combinedQC.txt
+    ./SomaticEnrichmentLib-"$version"/compileQcReport.sh $seqId $panel
 
 else
     echo "not all samples have completed running. Finising process for this sample."
 fi
 
-# pull all the qc data together
-./SomaticEnrichmentLib-"$version"/compileQcReport.sh $seqId $sampleId $panel
 
 # run manta for all samples except NTC
 if [ $sampleId != 'NTC' ]; then 
     ./SomaticEnrichmentLib-"$version"/manta.sh $seqId $sampleId $panel $vendorPrimaryBed
 fi
 
+
+# pull all the qc data together
+#./SomaticEnrichmentLib-"$version"/compileQcReport.sh $seqId $sampleId $panel
 # generate combinedQC.txt
-python /data/diagnostics/scripts/merge_qc_files.py /data/results/$seqId/$panel/
+#python /data/diagnostics/scripts/merge_qc_files.py /data/results/$seqId/$panel/ - moved to compileQcReport.sh
 
 
 
