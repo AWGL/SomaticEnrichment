@@ -21,8 +21,7 @@ source /home/transfer/miniconda3/bin/activate VirtualHood
            done
 
             . /data/results/$seqId/$panel/$sampleId/"$sampleId".variables
-            python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worklistId $referral 250x
-            python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worklistId $referral 135x
+            python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worklistId $referral
         fi
     done
 
