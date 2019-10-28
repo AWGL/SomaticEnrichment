@@ -21,7 +21,11 @@ source /home/transfer/miniconda3/bin/activate VirtualHood
            done
 
             . /data/results/$seqId/$panel/$sampleId/"$sampleId".variables
-            python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worklistId $referral
+            if [ $referral=='null' ]; then
+                echo "skipping $sampleId worksheet"
+            else
+                python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worklistId $referral
+            fi
         fi
     done
 
