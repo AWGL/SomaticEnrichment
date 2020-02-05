@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l walltime=20:00:00
+#PBS -l walltime=48:00:00
 #PBS -l ncpus=12
 set -euo pipefail
 
