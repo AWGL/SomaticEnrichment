@@ -49,15 +49,19 @@ for sampleId in $(cat ../sampleVCFs.txt); do
         fi
     done
 
+    # Sex check removed as it was unstable. 
     # sex check
     # this file will not be avilable for NTC
-    if [ $sampleId == "NTC" ]; then
-        ObsSex='Null'
-    elif [ ! -e /data/results/$seqId/$panel/$sampleId/CNVKit/*.sex ]; then
-        ObsSex='Unknown'
-    else
-        ObsSex=$(cat /data/results/$seqId/$panel/$sampleId/CNVKit/*.sex | grep .cnr | cut -f2)
-    fi
+    #if [ $sampleId == "NTC" ]; then
+    #    ObsSex='Null'
+    #elif [ ! -e /data/results/$seqId/$panel/$sampleId/CNVKit/*.sex ]; then
+    #    ObsSex='Unknown'
+    #else
+    #    ObsSex=$(cat /data/results/$seqId/$panel/$sampleId/CNVKit/*.sex | grep .cnr | cut -f2)
+    #fi
+
+    # keeping placeholder sex variable in report
+    ObsSex='Unknown'
 
     #Print QC metrics
     echo -e "TotalReads\tRawSequenceQuality\tGender\tTotalTargetUsableBases\tPercentTargetUseableBases\tDuplicationRate\tPctSelectedBases\tPctTargetBasesCt\tMeanOnTargetCoverage\tMeanInsertSize\tSDInsertSize\tPercentMapped\tAtDropout\tGcDropout" > $dir/"$seqId"_"$sampleId"_QC.txt
