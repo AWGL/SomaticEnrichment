@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l walltime=20:00:00
+#PBS -l walltime=48:00:00
 #PBS -l ncpus=12
 set -euo pipefail
 
@@ -11,7 +11,7 @@ cd $PBS_O_WORKDIR
 # Mode:        BY_SAMPLE
 # Use:         bash within sample directory
 
-version="1.0.0"
+version="1.2.0"
 
 # load sample variables
 . *.variables
@@ -106,9 +106,6 @@ rm "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId"_rmdup.bai
     $minMQS \
     $gatk3
 
-# pull all the qc data together
-./SomaticEnrichmentLib-"$version"/compileQcReport.sh $seqId $sampleId $panel
-
 # variant calling
 ./SomaticEnrichmentLib-"$version"/mutect2.sh $seqId $sampleId $pipelineName $version $panel $padding $minBQS $minMQS $vendorCaptureBed $gatk4
 
@@ -116,13 +113,15 @@ rm "$seqId"_"$sampleId"_rmdup.bam "$seqId"_"$sampleId"_rmdup.bai
 ./SomaticEnrichmentLib-"$version"/variant_filter.sh $seqId $sampleId $panel $minBQS $minMQS $gatk4
 
 # annotation
-./SomaticEnrichmentLib-"$version"/annotation.sh $seqId $sampleId $panel $gatk4
+# check that there are called variants to annotate
+if [ $(grep -v "#" "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf | grep -v '^ ' | wc -l) -ne 0 ]; then
+    ./SomaticEnrichmentLib-"$version"/annotation.sh $seqId $sampleId $panel $gatk4
+else
+    mv "$seqId"_"$sampleId"_filteredStrLeftAligned.vcf "$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf
+fi
 
 # generate variant reports
 ./SomaticEnrichmentLib-"$version"/hotspot_variants.sh $seqId $sampleId $panel $pipelineName $pipelineVersion
-
-# generate manta reports
-./SomaticEnrichmentLib-"$version"/manta.sh $seqId $sampleId $panel $vendorPrimaryBed
 
 # add samplename to run-level file if vcf detected
 if [ -e /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf ]
@@ -145,19 +144,28 @@ then
     ./SomaticEnrichmentLib-"$version"/cnvkit.sh $seqId $panel $vendorPrimaryBed $version
  
     # generate worksheets
-    ./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $panel    
+    ./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $panel
+    
+    # pull all the qc data together and generate combinedQC.txt
+    ./SomaticEnrichmentLib-"$version"/compileQcReport.sh $seqId $panel
+    
+    # tidy up
+    rm /data/results/$seqId/$panel/*.cnn
+    rm /data/results/$seqId/$panel/*.bed
 
 else
-    echo "not all samples have completed running. Finising process for sam."
+    echo "not all samples have completed running. Finising process for this sample."
 fi
 
-# generate combinedQC.txt
-python /data/diagnostics/scripts/merge_qc_files.py /data/results/$seqId/$panel/
+
+# run manta for all samples except NTC
+if [ $sampleId != 'NTC' ]; then 
+    ./SomaticEnrichmentLib-"$version"/manta.sh $seqId $sampleId $panel $vendorPrimaryBed
+fi
+
 
 # tidy up
-rm /data/results/$seqId/$panel/*.cnn
-rm /data/results/$seqId/$panel/*.bed
-rm /data/results/$seqId/$panel/*/*.interval_list
-rm /data/results/$seqId/$panel/*/seqArtifacts.*
-rm /data/results/$seqId/$panel/*/getpileupsummaries.table
-rm /data/results/$seqId/$panel/*/calculateContamination.table
+rm /data/results/$seqId/$panel/$sampleId/*.interval_list
+rm /data/results/$seqId/$panel/$sampleId/seqArtifacts.*
+rm /data/results/$seqId/$panel/$sampleId/getpileupsummaries.table
+rm /data/results/$seqId/$panel/$sampleId/calculateContamination.table

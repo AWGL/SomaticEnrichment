@@ -29,6 +29,6 @@ configManta.py \
     --exome \
     --callRegions /data/results/$seqId/$panel/$sampleId/MANTA/callRegions.bed.gz
 
-/data/results/$seqId/$panel/$sampleId/MANTA/runWorkflow.py -m local
+/data/results/$seqId/$panel/$sampleId/MANTA/runWorkflow.py --quiet -m local
 
 source /home/transfer/miniconda3/bin/deactivate

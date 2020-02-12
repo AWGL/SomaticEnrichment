@@ -31,14 +31,14 @@ echo "selecting common germline variants for CNV backbone"
     --select-type-to-include SNP \
     -O "$odir"/"$test_sample"_common.vcf \
     --restrict-alleles-to BIALLELIC \
-    --selectExpressions 'POP_AF > 0.05' \
-    --selectExpressions 'POP_AF < 0.95'
+    --selectExpressions 'POP_AF > 0.01' \
+    --selectExpressions 'POP_AF < 0.99'
 
 echo "seqgmentation"
 $cnvkit segment "$odir"/"$test_sample".cnr -m cbs -o "$odir"/"$test_sample".cns --vcf "$odir"/"$test_sample"_common.vcf --drop-low-coverage
 $cnvkit segmetrics -s "$odir"/"$test_sample".cn{s,r} -o "$odir"/"$test_sample".segmetrics.cns --ci
 
-$cnvkit call "$odir"/"$test_sample".segmetrics.cns -o "$odir"/"$test_sample".call.cns --vcf "$odir"/"$test_sample"_common.vcf -m threshold -t=-0.32,-0.15,0.14,0.26 --filter ci
+$cnvkit call "$odir"/"$test_sample".segmetrics.cns -o "$odir"/"$test_sample".call.cns --vcf "$odir"/"$test_sample"_common.vcf -m threshold -t=-0.32,-0.15,0.14,0.26 --filter ci --center
 
 $cnvkit metrics "$test_sample".targetcoverage.cnn "$test_sample".antitargetcoverage.cnn "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".call.cns > "$odir"/"$test_sample".metrics
 $cnvkit scatter "$odir"/"$test_sample".cnr -s "$odir"/"$test_sample".call.cns -v "$odir"/"$test_sample"_common.vcf -o "$odir"/"$test_sample"-scatter.pdf
@@ -62,14 +62,14 @@ for cnvfile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0
         $cnvkit scatter "$odir"/"$test_sample".cnr \
             -s "$odir"/"$test_sample".cns \
             -v "$odir"/"$test_sample"_common.vcf \
-            -c 1:836812-226252255 \
+            -c chr1:836812-226252255 \
             -g '' \
             -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$test_sample"_chromosome1-scatter.pdf
 
         $cnvkit scatter "$odir"/"$test_sample".cnr \
             -s "$odir"/"$test_sample".cns \
             -v "$odir"/"$test_sample"_common.vcf \
-            -c 19:27980136-58729905 \
+            -c chr19:27980136-58729905 \
             -g '' \
             -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$test_sample"_chromosome19-scatter.pdf
 
