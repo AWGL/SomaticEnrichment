@@ -59,7 +59,7 @@ do
     echo "${normal_samples[@]/%/.targetcoverage.cnn}" > /data/results/$seqId/$panel/$test_sample/CNVKit/tc.array
     echo "${normal_samples[@]/%/.antitargetcoverage.cnn}" > /data/results/$seqId/$panel/$test_sample/CNVKit/atc.array
 
-    qsub -o ./$i/ -e ./$i/ /data/results/$seqId/$panel/$i/SomaticEnrichmentLib-"$version"/2_cnvkit.sh  -F "$cnvkit $seqId $panel $test_sample"
+    qsub -o ./$i/ -e ./$i/ /data/results/$seqId/$panel/$i/SomaticEnrichmentLib-"$version"/2_cnvkit.sh  -F "$cnvkit $seqId $panel $test_sample $version"
 
     cp /data/results/$seqId/$panel/"$test_sample".targetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
     cp /data/results/$seqId/$panel/"$test_sample".antitargetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
