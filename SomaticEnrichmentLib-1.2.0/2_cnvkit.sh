@@ -102,3 +102,5 @@ for cnvfile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"
     fi
 
 done
+
+echo $test_sample >> /data/results/$seqId/$panel/samplesCNVKit_script2.txt
