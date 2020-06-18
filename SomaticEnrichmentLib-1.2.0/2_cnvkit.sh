@@ -9,6 +9,7 @@ cnvkit=$1
 seqId=$2
 panel=$3
 test_sample=$4
+version=$4
 
 FASTA=/data/db/human/gatk/2.8/b37/human_g1k_v37.fasta
 
@@ -52,7 +53,7 @@ $cnvkit sex "$odir"/"$test_sample".*.cnn "$odir"/"$test_sample".cnr "$odir"/"$te
 mkdir -p /data/results/$seqId/$panel/$test_sample/hotspot_cnvs
 
 
-for cnvfile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0.0.1/RochePanCancer/hotspot_cnvs/*;do
+for cnvfile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/RochePanCancer/hotspot_cnvs/*;do
     
     name=$(basename $cnvfile)
     echo $name
