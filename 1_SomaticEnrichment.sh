@@ -123,11 +123,17 @@ fi
 # generate variant reports
 ./SomaticEnrichmentLib-"$version"/hotspot_variants.sh $seqId $sampleId $panel $pipelineName $pipelineVersion
 
+# run manta for all samples except NTC
+if [ $sampleId != 'NTC' ]; then 
+    ./SomaticEnrichmentLib-"$version"/manta.sh $seqId $sampleId $panel $vendorPrimaryBed
+fi
+
 # add samplename to run-level file if vcf detected
 if [ -e /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf ]
 then
     echo $sampleId >> /data/results/$seqId/$panel/sampleVCFs.txt
 fi
+
 
 
 ## POST SNV CALLING ANALYSES
@@ -142,6 +148,12 @@ then
     echo "running CNVKit as $numberSamplesInVcf samples have completed SNV calling"
     # run cnv kit
     ./SomaticEnrichmentLib-"$version"/cnvkit.sh $seqId $panel $vendorPrimaryBed $version
+
+    # combine CNV calls with 1p19q calls for glioma and tumour panels
+    for s in $(cat ../sampleVCFs.txt)
+    do
+        /home/transfer/miniconda3/bin/python3 ./SomaticEnrichmentLib-"$version"/combine_1p19q.py $seqId $s
+    done
  
     # generate worksheets
     ./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $panel
@@ -155,12 +167,6 @@ then
 
 else
     echo "not all samples have completed running. Finising process for this sample."
-fi
-
-
-# run manta for all samples except NTC
-if [ $sampleId != 'NTC' ]; then 
-    ./SomaticEnrichmentLib-"$version"/manta.sh $seqId $sampleId $panel $vendorPrimaryBed
 fi
 
 
