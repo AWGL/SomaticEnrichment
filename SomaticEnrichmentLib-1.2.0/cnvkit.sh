@@ -52,12 +52,14 @@ done
 for i in ${samples[@]}
 do
     test_sample=$i
-    normal_samples=( ${samples[@]/$i} )
+    normal_samples=${samples[@]}
 
     mkdir -p /data/results/$seqId/$panel/$test_sample/CNVKit/
 
-    echo "${normal_samples[@]/%/.targetcoverage.cnn}" > /data/results/$seqId/$panel/$test_sample/CNVKit/tc.array
-    echo "${normal_samples[@]/%/.antitargetcoverage.cnn}" > /data/results/$seqId/$panel/$test_sample/CNVKit/atc.array
+    echo "${normal_samples[@]/%/.targetcoverage.cnn}" > /data/results/$seqId/$panel/$test_sample/CNVKit/tc_preliminary.array
+    sed 's/$i\s//g' /data/results/$seqId/$panel/$test_sample/CNVKit/tc_preliminary.array >>/data/results/$seqId/$panel/$test_sample/CNVKit/tc.array
+    echo "${normal_samples[@]/%/.antitargetcoverage.cnn}" > /data/results/$seqId/$panel/$test_sample/CNVKit/atc_preliminary.array
+    sed 's/$i\s//g' /data/results/$seqId/$panel/$test_sample/CNVKit/atc_preliminary.array >>/data/results/$seqId/$panel/$test_sample/CNVKit/atc.array
 
     qsub -o ./$i/ -e ./$i/ /data/results/$seqId/$panel/$i/SomaticEnrichmentLib-"$version"/2_cnvkit.sh  -F "$cnvkit $seqId $panel $test_sample $version"
 
