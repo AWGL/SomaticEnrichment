@@ -86,7 +86,7 @@ for c in glioma_file_dict:
     out_1p19q_glioma.append([c[k] for k in key_list])
 
 # calls from original tumour file
-for c in glioma_file_dict:
+for c in tumour_file_dict:
     # set missing values as N/A
     if 'baf' not in c.keys():
         c['baf'] = 'N/A'
