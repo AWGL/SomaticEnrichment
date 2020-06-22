@@ -22,8 +22,7 @@ source /home/transfer/miniconda3/bin/activate VirtualHood
            . /data/results/$seqId/$panel/$sampleId/"$sampleId".variables
 
            # check that referral is set, skip if not
-           echo $referral
-           if [ -z "${referral:-} "] || [ $referral == 'null' ]; then
+           if [ -z "${referral:-}" ] || [ $referral == 'null' ]; then
                echo "$sampleId referral reason not set, skipping sample"
            else
                echo "$sampleId referral - $referral"
