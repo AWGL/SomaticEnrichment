@@ -7,7 +7,7 @@ panel=$2
 source /home/transfer/miniconda3/bin/activate VirtualHood
 
     for i in /data/results/$seqId/$panel/*/; do
-        echo i
+        echo $i
         sampleId=$(basename $i)
 
         if [ $sampleId == 'NTC' ]; then
@@ -20,10 +20,13 @@ source /home/transfer/miniconda3/bin/activate VirtualHood
            done
 
            . /data/results/$seqId/$panel/$sampleId/"$sampleId".variables
+
+           # check that referral is set, skip if not
            echo $referral
-           if [ $referral == 'null' ]; then
-               echo "skipping $sampleId worksheet"
+           if [ -z "${referral:-} "] || [ $referral == 'null' ]; then
+               echo "$sampleId referral reason not set, skipping sample"
            else
+               echo "$sampleId referral - $referral"
                python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worklistId $referral
            fi
         fi
