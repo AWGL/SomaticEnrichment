@@ -26,7 +26,7 @@ source /home/transfer/miniconda3/bin/activate VirtualHood
                echo "$sampleId referral reason not set, skipping sample"
            else
                echo "$sampleId referral - $referral"
-               python /data/diagnostics/apps/VirtualHood/panCancer_report.py $seqId $sampleId $worklistId $referral
+               python /data/diagnostics/apps/VirtualHood/VirtualHood-1.1.0/panCancer_report.py $seqId $sampleId $worklistId $referral
            fi
         fi
     done
