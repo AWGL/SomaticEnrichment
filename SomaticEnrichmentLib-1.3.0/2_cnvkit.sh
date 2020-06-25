@@ -35,7 +35,7 @@ echo "selecting common germline variants for CNV backbone"
     --selectExpressions 'POP_AF > 0.01' \
     --selectExpressions 'POP_AF < 0.99'
 
-echo "seqgmentation"
+echo "segmentation"
 $cnvkit segment "$odir"/"$test_sample".cnr -m cbs -o "$odir"/"$test_sample".cns --vcf "$odir"/"$test_sample"_common.vcf --drop-low-coverage
 $cnvkit segmetrics -s "$odir"/"$test_sample".cn{s,r} -o "$odir"/"$test_sample".segmetrics.cns --ci
 

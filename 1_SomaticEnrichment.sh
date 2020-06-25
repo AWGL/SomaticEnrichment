@@ -166,7 +166,7 @@ then
     rm /data/results/$seqId/$panel/*.bed
 
 else
-    echo "not all samples have completed running. Finising process for this sample."
+    echo "not all samples have completed running. Finishing process for this sample."
 fi
 
 
