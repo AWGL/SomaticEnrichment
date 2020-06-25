@@ -9,7 +9,7 @@ cnvkit=$1
 seqId=$2
 panel=$3
 test_sample=$4
-version=$4
+version=$5
 
 FASTA=/data/db/human/gatk/2.8/b37/human_g1k_v37.fasta
 
