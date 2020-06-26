@@ -25,7 +25,12 @@ bams=$(for s in $samples; do echo /data/results/$seqId/$panel/$s/"$seqId"_"$s".b
 # 1. RUN FOR ALL SAMPLES IN RUN
 $cnvkit autobin $bams -t $vendorCaptureBed -g /data/db/human/cnvkit/access-excludes.hg19.bed --annotate /data/db/human/cnvkit/refFlat.txt 
 
-# keep track of which samples have already been processed with CNVKit - wipe file clean if it already exists
+
+# ---------------------------------------------------------------------------------------------------------
+#  CNVKit 1
+# ---------------------------------------------------------------------------------------------------------
+
+# initialise file to keep track of which samples have already been processed with CNVKit script 1 - wipe file clean if it already exists
 > /data/results/$seqId/$panel/samplesCNVKit_script1.txt
 
 # schedule each sample to be processed with 1_cnvkit.sh
@@ -34,10 +39,10 @@ do
     sample=$(basename $i)
     echo $sample
 
-    qsub -o ./$i/ -e ./$i/  /data/results/$seqId/$panel/$i/SomaticEnrichmentLib-"$version"/1_cnvkit.sh -F "$cnvkit $seqId $panel $sample"
+    qsub -o ./$i/ -e ./$i/  /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/SomaticEnrichmentLib-"$version"/1_cnvkit.sh -F "$cnvkit $seqId $panel $sample"
 done
 
-
+# check that cnvkit script 1 have all finished before next step
 numberOfProcessedCnvFiles=0
 numberOfInputFiles=$(cat /data/results/$seqId/$panel/sampleVCFs.txt | grep -v 'NTC' | wc -l)
 
@@ -49,6 +54,14 @@ do
 done
 
 
+# ---------------------------------------------------------------------------------------------------------
+#  CNVKit 2
+# ---------------------------------------------------------------------------------------------------------
+
+# initialise file to keep track of which samples have already been processed with CNVKit script 2 - wipe file clean if it already exists
+> /data/results/$seqId/$panel/samplesCNVKit_script2.txt
+
+# launch cnvkit script 2
 for i in ${samples[@]}
 do
     test_sample=$i
@@ -61,7 +74,7 @@ do
     echo "${normal_samples[@]/%/.antitargetcoverage.cnn}" > /data/results/$seqId/$panel/$test_sample/CNVKit/atc_preliminary.array
     sed 's/$i\s//g' /data/results/$seqId/$panel/$test_sample/CNVKit/atc_preliminary.array >>/data/results/$seqId/$panel/$test_sample/CNVKit/atc.array
 
-    qsub -o ./$i/ -e ./$i/ /data/results/$seqId/$panel/$i/SomaticEnrichmentLib-"$version"/2_cnvkit.sh  -F "$cnvkit $seqId $panel $test_sample $version"
+    qsub -o ./$i/ -e ./$i/ /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/SomaticEnrichmentLib-"$version"/2_cnvkit.sh  -F "$cnvkit $seqId $panel $test_sample $version"
 
     cp /data/results/$seqId/$panel/"$test_sample".targetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
     cp /data/results/$seqId/$panel/"$test_sample".antitargetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
@@ -70,10 +83,7 @@ do
 
 done
 
-
-# check that cnvkit script 2 have all finished
-> /data/results/$seqId/$panel/samplesCNVKit_script2.txt
-
+# check that cnvkit script 2 have all finished before next step
 numberOfProcessedCnvFiles_script2=0
 numberOfInputFiles=$(cat /data/results/$seqId/$panel/sampleVCFs.txt | grep -v 'NTC' | wc -l)
 
@@ -85,8 +95,12 @@ do
 done
 
 
+# ---------------------------------------------------------------------------------------------------------
+#  Postprocessing
+# ---------------------------------------------------------------------------------------------------------
+
 # combine CNV calls with 1p19q calls for glioma and tumour panels
 for sample in $(cat /data/results/$seqId/$panel/sampleVCFs.txt | grep -v 'NTC')
 do
-    /home/transfer/miniconda3/bin/python3 ./SomaticEnrichmentLib-"$version"/combine_1p19q.py $seqId $sample
+    /home/transfer/miniconda3/bin/python3 /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/SomaticEnrichmentLib-"$version"/combine_1p19q.py $seqId $sample
 done
