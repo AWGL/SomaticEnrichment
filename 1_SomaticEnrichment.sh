@@ -134,9 +134,16 @@ then
     echo $sampleId >> /data/results/$seqId/$panel/sampleVCFs.txt
 fi
 
+# tidy up
+rm /data/results/$seqId/$panel/$sampleId/*.interval_list
+rm /data/results/$seqId/$panel/$sampleId/seqArtifacts.*
+rm /data/results/$seqId/$panel/$sampleId/getpileupsummaries.table
+rm /data/results/$seqId/$panel/$sampleId/calculateContamination.table
 
 
-## POST SNV CALLING ANALYSES
+# ---------------------------------------------------------------------------------------------------------
+#  RUN LEVEL ANALYSES
+# ---------------------------------------------------------------------------------------------------------
 
 numberSamplesInVcf=$(cat ../sampleVCFs.txt | uniq | wc -l)
 numberSamplesInProject=$(find ../ -maxdepth 2 -mindepth 2 | grep .variables | uniq | wc -l)
@@ -145,8 +152,8 @@ numberSamplesInProject=$(find ../ -maxdepth 2 -mindepth 2 | grep .variables | un
 if [ $numberSamplesInVcf -eq $numberSamplesInProject ]
 then
 
-    echo "running CNVKit as $numberSamplesInVcf samples have completed SNV calling"
     # run cnv kit
+    echo "running CNVKit as $numberSamplesInVcf samples have completed SNV calling"
     ./SomaticEnrichmentLib-"$version"/cnvkit.sh $seqId $panel $vendorPrimaryBed $version
 
     # combine CNV calls with 1p19q calls for glioma and tumour panels
@@ -168,10 +175,3 @@ then
 else
     echo "not all samples have completed running. Finishing process for this sample."
 fi
-
-
-# tidy up
-rm /data/results/$seqId/$panel/$sampleId/*.interval_list
-rm /data/results/$seqId/$panel/$sampleId/seqArtifacts.*
-rm /data/results/$seqId/$panel/$sampleId/getpileupsummaries.table
-rm /data/results/$seqId/$panel/$sampleId/calculateContamination.table
