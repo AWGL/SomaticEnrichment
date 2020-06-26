@@ -14,6 +14,7 @@ source /home/transfer/miniconda3/bin/activate VirtualHood
             echo "skipping $sampleId worksheet"
         else
             # load sample variables
+            unset $referral
             . /data/results/$seqId/$panel/$sampleId/"$sampleId".variables
 
             # check that referral is set, skip if not
