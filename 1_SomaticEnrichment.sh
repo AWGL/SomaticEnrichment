@@ -156,12 +156,6 @@ then
     echo "running CNVKit as $numberSamplesInVcf samples have completed SNV calling"
     ./SomaticEnrichmentLib-"$version"/cnvkit.sh $seqId $panel $vendorPrimaryBed $version
 
-    # combine CNV calls with 1p19q calls for glioma and tumour panels
-    for s in $(cat ../sampleVCFs.txt)
-    do
-        /home/transfer/miniconda3/bin/python3 ./SomaticEnrichmentLib-"$version"/combine_1p19q.py $seqId $s
-    done
- 
     # generate worksheets
     ./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $panel
     

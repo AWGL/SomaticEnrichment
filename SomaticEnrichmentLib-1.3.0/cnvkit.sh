@@ -84,3 +84,9 @@ do
     numberOfProcessedCnvFiles_script2=$(wc -l < /data/results/$seqId/$panel/samplesCNVKit_script2.txt)
 done
 
+
+# combine CNV calls with 1p19q calls for glioma and tumour panels
+for sample in $(cat /data/results/$seqId/$panel/sampleVCFs.txt | grep -v 'NTC')
+do
+    /home/transfer/miniconda3/bin/python3 ./SomaticEnrichmentLib-"$version"/combine_1p19q.py $seqId $sample
+done
