@@ -14,7 +14,6 @@ source /home/transfer/miniconda3/bin/activate VirtualHood
             echo "skipping $sampleId worksheet"
         else
             # load sample variables
-            unset $referral
             . /data/results/$seqId/$panel/$sampleId/"$sampleId".variables
 
             # check that referral is set, skip if not
@@ -23,6 +22,9 @@ source /home/transfer/miniconda3/bin/activate VirtualHood
             else
                 echo "$sampleId referral - $referral"
                 python /data/diagnostics/apps/VirtualHood/VirtualHood-1.1.0/panCancer_report.py $seqId $sampleId $worklistId $referral
+
+                # unset variable to make sure if doesn't carry over to next sample
+                unset $referral
             fi
         fi
     done
