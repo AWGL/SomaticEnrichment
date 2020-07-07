@@ -63,14 +63,14 @@ for cnvfile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"
         $cnvkit scatter "$odir"/"$test_sample".cnr \
             -s "$odir"/"$test_sample".cns \
             -v "$odir"/"$test_sample"_common.vcf \
-            -c 1:836812-226252255 \
+            -c 1:0-249250621 \
             -g '' \
             -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$test_sample"_chromosome1-scatter.pdf
 
         $cnvkit scatter "$odir"/"$test_sample".cnr \
             -s "$odir"/"$test_sample".cns \
             -v "$odir"/"$test_sample"_common.vcf \
-            -c 19:27980136-58729905 \
+            -c 19:0-59128983 \
             -g '' \
             -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$test_sample"_chromosome19-scatter.pdf
 
