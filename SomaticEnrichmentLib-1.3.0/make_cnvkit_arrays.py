@@ -7,11 +7,13 @@ run_folder = '/data/results/{}/{}'.format(run_id, panel)
 samplevcfs_filepath = '{}/sampleVCFs.txt'.format(run_folder)
 
 
-# get list of all samples from sampleVCFs file
+# get list of all samples from sampleVCFs file - dont add NTC, this is skipped in the pipeline
 all_samples = []
 with open(samplevcfs_filepath) as samples_file:
     for line in samples_file:
-        all_samples.append(line.rstrip())
+        sample = line.rstrip()
+        if sample != 'NTC':
+            all_samples.append(sample)
 
 
 # loop through all samples, removing one each time and saving list to file
