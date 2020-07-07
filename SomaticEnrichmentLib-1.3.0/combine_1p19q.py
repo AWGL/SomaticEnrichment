@@ -34,29 +34,48 @@ glioma_file_dict = csv.DictReader(open(glioma_file), delimiter='\t')
 tumour_file_dict = csv.DictReader(open(tumour_file), delimiter='\t')
 
 # start and end co-ords of 1p and 19q
-start_1p = 836812
-end_1p = 226252255
+start_1p = 0
+end_1p = 121535433
 
-start_19q = 27980136
-end_19q = 58729905
+start_1q=124535435
+end_1q=249250621
 
+start_19p=0
+end_19p=24681781
+
+start_19q = 27681783
+end_19q = 59128983
 
 # filter seg_file to pull out regions overlapping with 1p or 19q
 # can be either- regions starts within 1p/19q OR region ends within 1p/19q OR region completely overlaps with 1p/19q
 combined = []
 for row in seg_file_dict:
+    
     if row['chromosome'] == '1':
         # check coords
         start = int(row['start'])
         end = int(row['end'])
-        if (start <= start_1p <= end) or (start <= end_1p <= end) or (start_1p < start and end_1p >= end):
+        if ((start <= end_1p) and (end >= start_1q)):
+            row['gene/region'] = '1p/1q'
+            combined.append(row)
+        elif ((start <= start_1p <= end) and (end < end_1p)) or ((start <= end_1p <= end) and (end < start_1q))  or (start_1p <= start and end_1p >= end):
             row['gene/region'] = '1p'
             combined.append(row)
+        elif ((start <= start_1q <= end) and (start > end_1p)) or ((start <= end_1q <= end) and (start > end_1p)) or (start_1q <= start and end_1q >= end):
+            row['gene/region'] = '1q'
+            combined.append(row)
+
     elif row['chromosome'] == '19':
         # check coords
         start = int(row['start'])
         end = int(row['end'])
-        if (start <= start_19q <= end) or (start <= end_19q <= end) or (start_19q < start and end_19q >= end):
+        if ((start<= end_19p) and (end >= start_19q)):
+            row['gene/region'] = '19p/19q'
+            combined.append(row)
+        elif ((start <= start_19p <= end) and (end < end_19p)) or ((start <= end_19p <= end) and (end < start_19q))  or (start_19p <= start and end_19p >= end):
+            row['gene/region'] = '19p'
+            combined.append(row)
+        elif ((start <= start_19q <= end) and (start > end_19p)) or ((start <= end_19q <= end) and (start > end_19p)) or (start_19q <= start and end_19q >= end):
             row['gene/region'] = '19q'
             combined.append(row)
 
