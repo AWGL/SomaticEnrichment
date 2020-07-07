@@ -39,7 +39,11 @@ do
     sample=$(basename $i)
     echo $sample
 
+    # queue 1_cnvkit
     qsub -o ./$i/ -e ./$i/  /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/SomaticEnrichmentLib-"$version"/1_cnvkit.sh -F "$cnvkit $seqId $panel $sample"
+
+    # make cnvkit directory - needed for make_cnvkit_arrays python script downstream
+    mkdir -p /data/results/$seqId/$panel/$sample/CNVKit/
 done
 
 # check that cnvkit script 1 have all finished before next step
@@ -61,25 +65,21 @@ done
 # initialise file to keep track of which samples have already been processed with CNVKit script 2 - wipe file clean if it already exists
 > /data/results/$seqId/$panel/samplesCNVKit_script2.txt
 
+# make tc and atc array for all samples
+/home/transfer/miniconda3/bin/python3 /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/SomaticEnrichmentLib-"$version"/make_cnvkit_arrays.py.py $seqId $panel
+
 # launch cnvkit script 2
 for i in ${samples[@]}
 do
     test_sample=$i
     normal_samples=${samples[@]}
 
-    mkdir -p /data/results/$seqId/$panel/$test_sample/CNVKit/
-
-    echo "${normal_samples[@]/%/.targetcoverage.cnn}" > /data/results/$seqId/$panel/$test_sample/CNVKit/tc_preliminary.array
-    sed 's/$i\s//g' /data/results/$seqId/$panel/$test_sample/CNVKit/tc_preliminary.array >>/data/results/$seqId/$panel/$test_sample/CNVKit/tc.array
-    echo "${normal_samples[@]/%/.antitargetcoverage.cnn}" > /data/results/$seqId/$panel/$test_sample/CNVKit/atc_preliminary.array
-    sed 's/$i\s//g' /data/results/$seqId/$panel/$test_sample/CNVKit/atc_preliminary.array >>/data/results/$seqId/$panel/$test_sample/CNVKit/atc.array
-
-    qsub -o ./$i/ -e ./$i/ /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/SomaticEnrichmentLib-"$version"/2_cnvkit.sh  -F "$cnvkit $seqId $panel $test_sample $version"
-
     cp /data/results/$seqId/$panel/"$test_sample".targetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
     cp /data/results/$seqId/$panel/"$test_sample".antitargetcoverage.cnn /data/results/$seqId/$panel/$test_sample/CNVKit/
     cp /data/results/$seqId/$panel/*.target.bed /data/results/$seqId/$panel/$test_sample/CNVKit/
     cp /data/results/$seqId/$panel/*.antitarget.bed /data/results/$seqId/$panel/$test_sample/CNVKit/
+
+    qsub -o ./$i/ -e ./$i/ /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/SomaticEnrichmentLib-"$version"/2_cnvkit.sh  -F "$cnvkit $seqId $panel $test_sample $version"
 
 done
 
