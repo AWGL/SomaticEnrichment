@@ -66,7 +66,7 @@ done
 > /data/results/$seqId/$panel/samplesCNVKit_script2.txt
 
 # make tc and atc array for all samples
-/home/transfer/miniconda3/bin/python3 /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/SomaticEnrichmentLib-"$version"/make_cnvkit_arrays.py.py $seqId $panel
+/home/transfer/miniconda3/bin/python3 /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/SomaticEnrichmentLib-"$version"/make_cnvkit_arrays.py $seqId $panel
 
 # launch cnvkit script 2
 for i in ${samples[@]}
