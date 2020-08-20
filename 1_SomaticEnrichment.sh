@@ -11,7 +11,7 @@ cd $PBS_O_WORKDIR
 # Mode:        BY_SAMPLE
 # Use:         bash within sample directory
 
-version="1.2.0"
+version="1.3.0"
 
 # load sample variables
 . *.variables
@@ -123,14 +123,27 @@ fi
 # generate variant reports
 ./SomaticEnrichmentLib-"$version"/hotspot_variants.sh $seqId $sampleId $panel $pipelineName $pipelineVersion
 
+# run manta for all samples except NTC
+if [ $sampleId != 'NTC' ]; then 
+    ./SomaticEnrichmentLib-"$version"/manta.sh $seqId $sampleId $panel $vendorPrimaryBed
+fi
+
 # add samplename to run-level file if vcf detected
 if [ -e /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf ]
 then
     echo $sampleId >> /data/results/$seqId/$panel/sampleVCFs.txt
 fi
 
+# tidy up
+rm /data/results/$seqId/$panel/$sampleId/*.interval_list
+rm /data/results/$seqId/$panel/$sampleId/seqArtifacts.*
+rm /data/results/$seqId/$panel/$sampleId/getpileupsummaries.table
+rm /data/results/$seqId/$panel/$sampleId/calculateContamination.table
 
-## POST SNV CALLING ANALYSES
+
+# ---------------------------------------------------------------------------------------------------------
+#  RUN LEVEL ANALYSES
+# ---------------------------------------------------------------------------------------------------------
 
 numberSamplesInVcf=$(cat ../sampleVCFs.txt | uniq | wc -l)
 numberSamplesInProject=$(find ../ -maxdepth 2 -mindepth 2 | grep .variables | uniq | wc -l)
@@ -139,10 +152,10 @@ numberSamplesInProject=$(find ../ -maxdepth 2 -mindepth 2 | grep .variables | un
 if [ $numberSamplesInVcf -eq $numberSamplesInProject ]
 then
 
-    echo "running CNVKit as $numberSamplesInVcf samples have completed SNV calling"
     # run cnv kit
+    echo "running CNVKit as $numberSamplesInVcf samples have completed SNV calling"
     ./SomaticEnrichmentLib-"$version"/cnvkit.sh $seqId $panel $vendorPrimaryBed $version
- 
+
     # generate worksheets
     ./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $panel
     
@@ -154,18 +167,5 @@ then
     rm /data/results/$seqId/$panel/*.bed
 
 else
-    echo "not all samples have completed running. Finising process for this sample."
+    echo "not all samples have completed running. Finishing process for this sample."
 fi
-
-
-# run manta for all samples except NTC
-if [ $sampleId != 'NTC' ]; then 
-    ./SomaticEnrichmentLib-"$version"/manta.sh $seqId $sampleId $panel $vendorPrimaryBed
-fi
-
-
-# tidy up
-rm /data/results/$seqId/$panel/$sampleId/*.interval_list
-rm /data/results/$seqId/$panel/$sampleId/seqArtifacts.*
-rm /data/results/$seqId/$panel/$sampleId/getpileupsummaries.table
-rm /data/results/$seqId/$panel/$sampleId/calculateContamination.table
