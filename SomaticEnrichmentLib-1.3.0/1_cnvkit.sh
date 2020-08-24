@@ -16,5 +16,5 @@ $cnvkit coverage /data/results/$seqId/$panel/$sample/"$seqId"_"$sample".bam /dat
 
 if [ -e /data/results/$seqId/$panel/"$sample".antitargetcoverage.cnn ]
 then
-    echo $sample >> /data/results/$seqId/$panel/samplesCNVKit.txt
+    echo $sample >> /data/results/$seqId/$panel/samplesCNVKit_script1.txt
 fi

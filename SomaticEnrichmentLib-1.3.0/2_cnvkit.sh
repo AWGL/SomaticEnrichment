@@ -9,6 +9,7 @@ cnvkit=$1
 seqId=$2
 panel=$3
 test_sample=$4
+version=$5
 
 FASTA=/data/db/human/gatk/2.8/b37/human_g1k_v37.fasta
 
@@ -34,7 +35,7 @@ echo "selecting common germline variants for CNV backbone"
     --selectExpressions 'POP_AF > 0.01' \
     --selectExpressions 'POP_AF < 0.99'
 
-echo "seqgmentation"
+echo "segmentation"
 $cnvkit segment "$odir"/"$test_sample".cnr -m cbs -o "$odir"/"$test_sample".cns --vcf "$odir"/"$test_sample"_common.vcf --drop-low-coverage
 $cnvkit segmetrics -s "$odir"/"$test_sample".cn{s,r} -o "$odir"/"$test_sample".segmetrics.cns --ci
 
@@ -52,7 +53,7 @@ $cnvkit sex "$odir"/"$test_sample".*.cnn "$odir"/"$test_sample".cnr "$odir"/"$te
 mkdir -p /data/results/$seqId/$panel/$test_sample/hotspot_cnvs
 
 
-for cnvfile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0.0.1/RochePanCancer/hotspot_cnvs/*;do
+for cnvfile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/RochePanCancer/hotspot_cnvs/*;do
     
     name=$(basename $cnvfile)
     echo $name
@@ -62,14 +63,14 @@ for cnvfile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0
         $cnvkit scatter "$odir"/"$test_sample".cnr \
             -s "$odir"/"$test_sample".cns \
             -v "$odir"/"$test_sample"_common.vcf \
-            -c chr1:836812-226252255 \
+            -c 1:0-249250621 \
             -g '' \
             -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$test_sample"_chromosome1-scatter.pdf
 
         $cnvkit scatter "$odir"/"$test_sample".cnr \
             -s "$odir"/"$test_sample".cns \
             -v "$odir"/"$test_sample"_common.vcf \
-            -c chr19:27980136-58729905 \
+            -c 19:0-59128983 \
             -g '' \
             -o /data/results/$seqId/$panel/$test_sample/hotspot_cnvs/"$test_sample"_chromosome19-scatter.pdf
 
@@ -101,3 +102,5 @@ for cnvfile in /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-0
     fi
 
 done
+
+echo $test_sample >> /data/results/$seqId/$panel/samplesCNVKit_script2.txt
