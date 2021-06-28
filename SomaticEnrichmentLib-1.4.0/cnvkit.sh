@@ -18,7 +18,7 @@ cnvkit=/share/apps/anaconda2/bin/cnvkit.py
 # navigate to run directory
 cd /data/results/$seqId/$panel/
 
-samples=$(cat /data/results/$seqId/$panel/sampleVCFs.txt | grep -v "NTC")
+samples=$(cat /data/results/$seqId/$panel/CNVKit_samples.txt | grep -v "NTC")
 bams=$(for s in $samples; do echo /data/results/$seqId/$panel/$s/"$seqId"_"$s".bam ;done)
 
 
@@ -48,7 +48,7 @@ done
 
 # check that cnvkit script 1 have all finished before next step
 numberOfProcessedCnvFiles=0
-numberOfInputFiles=$(cat /data/results/$seqId/$panel/sampleVCFs.txt | grep -v 'NTC' | wc -l)
+numberOfInputFiles=$(cat /data/results/$seqId/$panel/CNVKit_samples.txt | grep -v 'NTC' | wc -l)
 
 until [ $numberOfProcessedCnvFiles -eq $numberOfInputFiles ]
 do
@@ -85,7 +85,7 @@ done
 
 # check that cnvkit script 2 have all finished before next step
 numberOfProcessedCnvFiles_script2=0
-numberOfInputFiles=$(cat /data/results/$seqId/$panel/sampleVCFs.txt | grep -v 'NTC' | wc -l)
+numberOfInputFiles=$(cat /data/results/$seqId/$panel/CNVKit_samples.txt | grep -v 'NTC' | wc -l)
 
 until [ $numberOfProcessedCnvFiles_script2 -eq $numberOfInputFiles ]
 do
@@ -100,7 +100,7 @@ done
 # ---------------------------------------------------------------------------------------------------------
 
 # combine CNV calls with 1p19q calls for glioma and tumour panels
-for sample in $(cat /data/results/$seqId/$panel/sampleVCFs.txt | grep -v 'NTC')
+for sample in $(cat /data/results/$seqId/$panel/CNVKit_samples.txt | grep -v 'NTC')
 do
     /home/transfer/miniconda3/bin/python3 /data/diagnostics/pipelines/SomaticEnrichment/SomaticEnrichment-"$version"/SomaticEnrichmentLib-"$version"/combine_1p19q.py $seqId $sample
 done

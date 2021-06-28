@@ -129,3 +129,24 @@ rm vendorCaptureBed_100pad.bed
 rm *interval_statistics
 rm *interval_summary
 rm *sample_statistics
+
+
+
+# run depth of coverage for 1p19q
+
+# generate per-base coverage for cnvs
+/share/apps/jre-distros/jre1.8.0_131/bin/java -XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -Djava.io.tmpdir=/state/partition1/tmpdir -Xmx4g -jar $gatk3 \
+    -T DepthOfCoverage \
+    -R /state/partition1/db/human/gatk/2.8/b37/human_g1k_v37.fasta \
+    -I /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId".bam \
+    -L /data/diagnostics/pipelines/"$pipelineName"/"$pipelineName"-"$pipelineVersion"/$panel/1p19q_coverage.bed \
+    -o /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_CNVS_DepthOfCoverage \
+    --countType COUNT_FRAGMENTS \
+    --minMappingQuality $minMQS \
+    --minBaseQuality $minBQS \
+    --omitLocusTable \
+    -rf MappingQualityUnavailable \
+    -dt NONE
+
+
+
