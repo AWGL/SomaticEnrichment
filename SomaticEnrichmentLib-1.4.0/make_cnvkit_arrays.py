@@ -1,13 +1,13 @@
 import sys
 
-# make filpaths for results folder and sampleVCFs file (which contains a list of all samples)
+# make filpaths for results folder and CNVKit_samples file (which contains a list of all samples)
 run_id = sys.argv[1]
 panel = sys.argv[2]
 run_folder = '/data/results/{}/{}'.format(run_id, panel)
-samplevcfs_filepath = '{}/sampleVCFs.txt'.format(run_folder)
+samplevcfs_filepath = '{}/CNVKit_samples.txt'.format(run_folder)
 
 
-# get list of all samples from sampleVCFs file - dont add NTC, this is skipped in the pipeline
+# get list of all samples from CNVKit_samples.txt (created from sampleVCFs file but only contains samples with greater than or equal to 2 million reads) - dont add NTC, this is skipped in the pipeline
 all_samples = []
 with open(samplevcfs_filepath) as samples_file:
     for line in samples_file:

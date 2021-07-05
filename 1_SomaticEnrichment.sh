@@ -11,7 +11,7 @@ cd $PBS_O_WORKDIR
 # Mode:        BY_SAMPLE
 # Use:         bash within sample directory
 
-version="1.3.0"
+version="1.4.0"
 
 # load sample variables
 . *.variables
@@ -128,6 +128,24 @@ if [ $sampleId != 'NTC' ]; then
     ./SomaticEnrichmentLib-"$version"/manta.sh $seqId $sampleId $panel $vendorPrimaryBed
 fi
 
+
+# add samplename to cnvkit file if number of reads is greater than 2 million
+total_reads=$(grep "^PAIR" "$seqId"_"$sampleId"_AlignmentSummaryMetrics.txt  | cut -f2)
+if [ $total_reads -ge 2000000 ]
+then
+	echo $sampleId >> /data/results/$seqId/$panel/CNVKit_samples.txt
+else
+	#create files needed for virtualhood
+	mkdir hotspot_cnvs
+	touch ./hotspot_cnvs/"$sampleId"_"$referral"
+	echo "CNVKit did not run on this sample- less than 2 million reads" >> ./hotspot_cnvs/"$sampleId"_"$referral"
+
+	touch ./hotspot_cnvs/"$sampleId"_Glioma_1p19q.txt
+	echo "CNVKit did not run on this sample- less than 2 million reads" >> ./hotspot_cnvs/"$sampleId"_Glioma_1p19q.txt
+
+
+fi
+
 # add samplename to run-level file if vcf detected
 if [ -e /data/results/$seqId/$panel/$sampleId/"$seqId"_"$sampleId"_filteredStrLeftAligned_annotated.vcf ]
 then
@@ -157,7 +175,7 @@ then
     ./SomaticEnrichmentLib-"$version"/cnvkit.sh $seqId $panel $vendorPrimaryBed $version
 
     # generate worksheets
-    ./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $panel
+    ./SomaticEnrichmentLib-"$version"/make_variant_report.sh $seqId $panel $version
     
     # pull all the qc data together and generate combinedQC.txt
     ./SomaticEnrichmentLib-"$version"/compileQcReport.sh $seqId $panel
